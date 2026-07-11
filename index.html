@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soiav 2 build 6002 (RTM)</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Мастер установки -->
+    <div class="setup-wizard active">
+        <div class="setup-container">
+            <div class="setup-header">
+                <div class="setup-logo">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h1>Soiav 2 <span>RTM</span></h1>
+                <p>build 6002 · Финальная версия</p>
+            </div>
+            
+            <!-- Шаг 1: Тема -->
+            <div class="setup-step active" id="step1">
+                <h2>Выбор темы</h2>
+                <div class="theme-selector">
+                    <div class="theme-option" data-theme="light">
+                        <div class="theme-preview light-theme"></div>
+                        <span>Светлая</span>
+                    </div>
+                    <div class="theme-option" data-theme="dark">
+                        <div class="theme-preview dark-theme"></div>
+                        <span>Темная</span>
+                    </div>
+                    <div class="theme-option" data-theme="blue">
+                        <div class="theme-preview blue-theme"></div>
+                        <span>Синяя</span>
+                    </div>
+                    <div class="theme-option" data-theme="green">
+                        <div class="theme-preview green-theme"></div>
+                        <span>Зеленая</span>
+                    </div>
+                    <div class="theme-option" data-theme="purple">
+                        <div class="theme-preview purple-theme"></div>
+                        <span>Фиолетовая</span>
+                    </div>
+                </div>
+                <div class="setup-buttons">
+                    <button class="setup-btn" onclick="nextStep(2)">Далее</button>
+                </div>
+            </div>
+<!-- Шаг 2: Обои -->
+<div class="setup-step" id="step2">
+    <h2>Обои рабочего стола</h2>
+    <div style="max-height: 280px; overflow-y: scroll; border-radius: 16px; margin: 15px 0;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 5px;">
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/pr6sjWJQ/IMG-3606.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="1"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/ccyK7XZr/IMG-3607.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="2"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/DHSVYYT7/IMG-4555.png'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="3"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/LXwRKZvJ/IMG-4554.png'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="4"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/XrXhFsfd/IMG-4541.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="5"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/Mm7QHdm/IMG-4537.png'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="6"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/DfhR03QY/IMG-4540.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="7"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/TMpLx19c/IMG-4535.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="8"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/DHc83R8m/IMG-4532.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="9"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/4njh5XfW/IMG-4536.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="10"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/XrG22RV7/IMG-4530.png'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="11"></div>
+            <div class="wallpaper-option" style="background-image: url('https://i.ibb.co/fGtk2cF6/IMG-4531.jpg'); height: 110px; background-size: cover; border-radius: 12px;" data-wallpaper="12"></div>
+        </div>
+    </div>
+    <div class="setup-buttons">
+        <button class="setup-btn secondary" onclick="prevStep(1)">Назад</button>
+        <button class="setup-btn" onclick="nextStep(3)">Далее</button>
+    </div>
+</div>
+            <!-- Шаг 3: Версия Soiav -->
+            <div class="setup-step" id="step3">
+                <h2>Выберите версию</h2>
+                <div class="version-selector">
+                    <div class="version-option selected" data-version="home" onclick="selectVersion('home')">
+                        <div class="version-icon"><i class="fas fa-home"></i></div>
+                        <div class="version-info">
+                            <h3>Soiav 2 Домашняя</h3>
+                            <p>Базовая версия для дома</p>
+                        </div>
+                        <div class="version-check"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="version-option" data-version="pro" onclick="selectVersion('pro')">
+                        <div class="version-icon"><i class="fas fa-crown"></i></div>
+                        <div class="version-info">
+                            <h3>Soiav 2 Pro</h3>
+                            <p>Профессиональная версия</p>
+                        </div>
+                    </div>
+                    <div class="version-option" data-version="server" onclick="selectVersion('server')">
+                        <div class="version-icon"><i class="fas fa-server"></i></div>
+                        <div class="version-info">
+                            <h3>Soiav 2 Server</h3>
+                            <p>Серверная версия</p>
+                        </div>
+                        <span class="version-badge">Server</span>
+                    </div>
+                </div>
+                <div class="setup-buttons">
+                    <button class="setup-btn secondary" onclick="prevStep(2)">Назад</button>
+                    <button class="setup-btn" onclick="nextStep(4)">Далее</button>
+                </div>
+            </div>
+
+            <!-- Шаг 4: Аккаунт SID -->
+            <div class="setup-step" id="step4">
+                <h2>Вход в SID аккаунт</h2>
+                <div class="sid-login">
+                    <div class="sid-avatar">
+                        <img src="https://i.ibb.co/HT71Ghdd/photo-output.png" alt="SID Avatar">
+                    </div>
+                    <div class="personalization-form">
+                        <label>Email или SID</label>
+                        <input type="email" placeholder="user@soiav.com" id="sidEmail">
+                        
+                        <label>Пароль</label>
+                        <input type="password" placeholder="••••••••" id="sidPassword">
+                        
+                        <div class="sid-options">
+                            <label class="checkbox">
+                                <input type="checkbox" id="rememberSid"> Запомнить меня
+                            </label>
+                            <a href="#" onclick="createSidAccount()">Создать аккаунт</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-buttons">
+                    <button class="setup-btn secondary" onclick="prevStep(3)">Назад</button>
+                    <button class="setup-btn" onclick="nextStep(5)">Пропустить</button>
+                    <button class="setup-btn" onclick="loginSid()">Войти</button>
+                </div>
+            </div>
+
+            <!-- Шаг 5: Персонализация -->
+            <div class="setup-step" id="step5">
+                <h2>Персонализация</h2>
+                <div class="personalization-form">
+                    <label>Имя пользователя:</label>
+                    <input type="text" id="username" value="Пользователь Soiav">
+                    
+                    <label>Цвет акцента:</label>
+                    <input type="color" id="accentColor" value="#0078d7">
+                    
+                    <label>Размер иконок:</label>
+                    <select id="iconSize">
+                        <option value="small">Маленькие</option>
+                        <option value="medium" selected>Средние</option>
+                        <option value="large">Большие</option>
+                    </select>
+                    
+                    <label>Положение панели задач:</label>
+                    <select id="taskbarPosition">
+                        <option value="bottom" selected>Снизу</option>
+                        <option value="top">Сверху</option>
+                        <option value="left">Слева</option>
+                        <option value="right">Справа</option>
+                    </select>
+                </div>
+                <div class="setup-buttons">
+                    <button class="setup-btn secondary" onclick="prevStep(4)">Назад</button>
+                    <button class="setup-btn" onclick="nextStep(6)">Далее</button>
+                </div>
+            </div>
+
+            <!-- Шаг 6: Системные настройки -->
+            <div class="setup-step" id="step6">
+                <h2>Системные настройки</h2>
+                <div class="personalization-form">
+                    <label>Синхронизация:</label>
+                    <select id="syncSettings">
+                        <option value="all">Синхронизировать всё</option>
+                        <option value="files">Только файлы</option>
+                        <option value="settings">Только настройки</option>
+                        <option value="none">Отключить</option>
+                    </select>
+
+                    <label>Системный диск:</label>
+                    <select id="systemDisk">
+                        <option value="C">Диск C: (SSD 512GB)</option>
+                        <option value="D">Диск D: (HDD 2TB)</option>
+                        <option value="E">Диск E: (Облачное хранилище)</option>
+                    </select>
+
+                    <label>Режим производительности:</label>
+                    <select id="performance">
+                        <option value="balanced">Сбалансированный</option>
+                        <option value="performance">Высокая производительность</option>
+                        <option value="powersave">Энергосбережение</option>
+                    </select>
+
+                    <label>Часовой пояс:</label>
+                    <select id="timezone">
+                        <option value="moscow">Москва (UTC+3)</option>
+                        <option value="london">Лондон (UTC+0)</option>
+                        <option value="newyork">Нью-Йорк (UTC-5)</option>
+                        <option value="tokyo">Токио (UTC+9)</option>
+                    </select>
+                </div>
+                <div class="setup-buttons">
+                    <button class="setup-btn secondary" onclick="prevStep(5)">Назад</button>
+                    <button class="setup-btn" onclick="startFinalSetup()">Установить</button>
+                </div>
+            </div>
+
+            <!-- Шаг 7: Завершение -->
+            <div class="setup-step" id="step7">
+                <h2>Завершение установки</h2>
+                <div class="final-step">
+                    <div class="loading-animation">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Применяем настройки...</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Подготовка системы...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- РАБОЧИЙ СТОЛ -->
+    <div class="desktop" id="desktop" oncontextmenu="showContextMenu(event)">
+        <!-- Контекстное меню -->
+        <div class="context-menu" id="contextMenu">
+            <div class="context-menu-item" onclick="createNewItem('file')">
+                <i class="fas fa-file"></i>
+                <span>Создать файл</span>
+            </div>
+            <div class="context-menu-item" onclick="createNewItem('folder')">
+                <i class="fas fa-folder"></i>
+                <span>Создать папку</span>
+            </div>
+            <div class="context-menu-item" onclick="createNewItem('document')">
+                <i class="fas fa-file-alt"></i>
+                <span>Создать документ</span>
+            </div>
+            <div class="context-menu-item" onclick="createNewItem('shortcut')">
+                <i class="fas fa-link"></i>
+                <span>Создать ярлык</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" onclick="openPersonalization()">
+                <i class="fas fa-palette"></i>
+                <span>Персонализация</span>
+            </div>
+            <div class="context-menu-item" onclick="changeIconSize()">
+                <i class="fas fa-arrows-alt"></i>
+                <span>Размер иконок</span>
+            </div>
+            <div class="context-menu-item" onclick="syncWallpaper()">
+                <i class="fas fa-sync-alt"></i>
+                <span>Синхронизировать обои</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" onclick="refreshDesktop()">
+                <i class="fas fa-sync-alt"></i>
+                <span>Обновить</span>
+            </div>
+        </div>
+
+        <!-- Иконки рабочего стола -->
+        <div class="desktop-icons" id="desktopIcons">
+            <div class="desktop-icon" data-app="fileExplorer" onclick="openApp('fileExplorer')">
+                <img src="https://i.ibb.co/Z6BGYQLL/photo-output.png" alt="Файлы">
+                <span>Файлы</span>
+            </div>
+            <div class="desktop-icon" data-app="browser" onclick="openApp('browser')">
+                <img src="https://i.ibb.co/Rkk0W5Nz/photo-output.png" alt="Браузер">
+                <span>Браузер</span>
+            </div>
+            <div class="desktop-icon" data-app="store" onclick="openApp('store')">
+                <img src="https://i.ibb.co/m5SqS4nc/photo-output.png" alt="Магазин">
+                <span>Магазин</span>
+            </div>
+            <div class="desktop-icon" data-app="mail" onclick="openApp('mail')">
+                <img src="https://i.ibb.co/39h7Yjqs/photo-output.png" alt="Почта">
+                <span>Почта</span>
+            </div>
+            <div class="desktop-icon" data-app="photos" onclick="openApp('photos')">
+                <img src="https://i.ibb.co/FqYXmK2H/photo-output.png" alt="Фото">
+                <span>Фото</span>
+            </div>
+            <div class="desktop-icon" data-app="weather" onclick="openApp('weather')">
+                <img src="https://i.ibb.co/216zwxdv/photo-output.png" alt="Погода">
+                <span>Погода</span>
+            </div>
+            <div class="desktop-icon" data-app="settings" onclick="openApp('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Настройки</span>
+            </div>
+            <div class="desktop-icon" data-app="terminal" onclick="openApp('terminal')">
+                <i class="fas fa-terminal"></i>
+                <span>Терминал</span>
+            </div>
+            <div class="desktop-icon" data-app="calendar" onclick="openApp('calendar')">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Календарь</span>
+            </div>
+            <div class="desktop-icon" data-app="music" onclick="openApp('music')">
+                <i class="fas fa-music"></i>
+                <span>Музыка</span>
+            </div>
+        </div>
+
+        <!-- ОКНА ПРИЛОЖЕНИЙ -->
+        <!-- Проводник -->
+        <div class="window" id="fileExplorer">
+            <div class="window-header">
+                <span><img src="https://i.ibb.co/Z6BGYQLL/photo-output.png" style="width: 20px; height: 20px; margin-right: 8px;"> Проводник</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('fileExplorer')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('fileExplorer')">□</button>
+                    <button class="window-control" onclick="closeWindow('fileExplorer')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="explorer-toolbar">
+                    <button class="toolbar-btn" onclick="navigateBack()"><i class="fas fa-arrow-left"></i></button>
+                    <button class="toolbar-btn" onclick="navigateForward()"><i class="fas fa-arrow-right"></i></button>
+                    <button class="toolbar-btn" onclick="navigateUp()"><i class="fas fa-arrow-up"></i></button>
+                    <div class="address-bar" id="addressBar">Этот компьютер</div>
+                    <button class="toolbar-btn" onclick="createNewFolder()"><i class="fas fa-folder-plus"></i></button>
+                    <button class="toolbar-btn" onclick="syncFiles()"><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="file-grid" id="fileGrid">
+                    <div class="file-item" onclick="openFolder('documents')">
+                        <i class="fas fa-folder"></i>
+                        <span>Документы</span>
+                    </div>
+                    <div class="file-item" onclick="openFolder('images')">
+                        <i class="fas fa-folder"></i>
+                        <span>Изображения</span>
+                    </div>
+                    <div class="file-item" onclick="openFolder('downloads')">
+                        <i class="fas fa-folder"></i>
+                        <span>Загрузки</span>
+                    </div>
+                    <div class="file-item" onclick="openFolder('music')">
+                        <i class="fas fa-folder"></i>
+                        <span>Музыка</span>
+                    </div>
+                    <div class="file-item" onclick="openFolder('videos')">
+                        <i class="fas fa-folder"></i>
+                        <span>Видео</span>
+                    </div>
+                    <div class="file-item" onclick="openFolder('cloud')">
+                        <i class="fas fa-cloud"></i>
+                        <span>SID Cloud</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Браузер -->
+        <div class="window" id="browser">
+            <div class="window-header">
+                <span><img src="https://i.ibb.co/Rkk0W5Nz/photo-output.png" style="width: 20px; height: 20px; margin-right: 8px;"> Soiav Browser</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('browser')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('browser')">□</button>
+                    <button class="window-control" onclick="closeWindow('browser')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="browser-bar">
+                    <div class="browser-controls">
+                        <button class="browser-btn"><i class="fas fa-arrow-left"></i></button>
+                        <button class="browser-btn"><i class="fas fa-arrow-right"></i></button>
+                        <button class="browser-btn"><i class="fas fa-redo-alt"></i></button>
+                        <button class="browser-btn"><i class="fas fa-home"></i></button>
+                    </div>
+                    <input type="text" value="https://soiav.cloud/start" class="url-bar" id="browserUrl">
+                    <button class="browser-btn" onclick="refreshBrowser()"><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="browser-content" id="browserContent">
+                    <div class="browser-welcome">
+                        <img src="https://i.ibb.co/Rkk0W5Nz/photo-output.png" style="width: 80px; margin-bottom: 20px;">
+                        <h2>Soiav Browser</h2>
+                        <p>Быстрый и безопасный браузер</p>
+                        <div class="quick-search">
+                            <input type="text" placeholder="Поиск в интернете..." id="searchInput">
+                            <button onclick="searchWeb()"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Магазин -->
+        <div class="window" id="store">
+            <div class="window-header">
+                <span><img src="https://i.ibb.co/m5SqS4nc/photo-output.png" style="width: 20px; height: 20px; margin-right: 8px;"> Soiav Store</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('store')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('store')">□</button>
+                    <button class="window-control" onclick="closeWindow('store')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="store-header">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Поиск приложений..." id="storeSearch">
+                    </div>
+                    <div class="store-categories">
+                        <button class="category-btn active" onclick="filterApps('all')">Все</button>
+                        <button class="category-btn" onclick="filterApps('apps')">Приложения</button>
+                        <button class="category-btn" onclick="filterApps('games')">Игры</button>
+                        <button class="category-btn" onclick="filterApps('dev')">Для разработчиков</button>
+                        <button class="category-btn" onclick="filterApps('ssap')">SSAP</button>
+                    </div>
+                </div>
+                <div class="apps-grid" id="appsGrid"></div>
+            </div>
+        </div>
+
+        <!-- Почта -->
+        <div class="window" id="mail">
+            <div class="window-header">
+                <span><img src="https://i.ibb.co/39h7Yjqs/photo-output.png" style="width: 20px; height: 20px; margin-right: 8px;"> Почта</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('mail')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('mail')">□</button>
+                    <button class="window-control" onclick="closeWindow('mail')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="mail-folders">
+                    <div class="folder active" onclick="selectMailFolder('inbox')">Входящие</div>
+                    <div class="folder" onclick="selectMailFolder('sent')">Отправленные</div>
+                    <div class="folder" onclick="selectMailFolder('drafts')">Черновики</div>
+                    <div class="folder" onclick="selectMailFolder('spam')">Спам</div>
+                    <div class="folder" onclick="selectMailFolder('trash')">Корзина</div>
+                </div>
+                <div class="mail-list" id="mailList"></div>
+            </div>
+        </div>
+
+        <!-- Фото -->
+        <div class="window" id="photos">
+            <div class="window-header">
+                <span><img src="https://i.ibb.co/FqYXmK2H/photo-output.png" style="width: 20px; height: 20px; margin-right: 8px;"> Фотографии</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('photos')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('photos')">□</button>
+                    <button class="window-control" onclick="closeWindow('photos')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="photos-toolbar">
+                    <button class="toolbar-btn" onclick="importPhotos()"><i class="fas fa-upload"></i> Импорт</button>
+                    <button class="toolbar-btn" onclick="syncPhotos()"><i class="fas fa-sync-alt"></i> Синхр.</button>
+                    <button class="toolbar-btn" onclick="createAlbum()"><i class="fas fa-plus"></i> Альбом</button>
+                </div>
+                <div class="photos-grid" id="photosGrid"></div>
+            </div>
+        </div>
+
+        <!-- Погода -->
+        <div class="window" id="weather">
+            <div class="window-header">
+                <span><img src="https://i.ibb.co/216zwxdv/photo-output.png" style="width: 20px; height: 20px; margin-right: 8px;"> Погода</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('weather')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('weather')">□</button>
+                    <button class="window-control" onclick="closeWindow('weather')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="weather-search">
+                    <input type="text" placeholder="Поиск города..." id="weatherCity">
+                    <button onclick="searchWeather()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="weather-current" id="weatherCurrent"></div>
+                <div class="weather-forecast" id="weatherForecast"></div>
+            </div>
+        </div>
+
+        <!-- Настройки -->
+        <div class="window" id="settings">
+            <div class="window-header">
+                <span><i class="fas fa-cog"></i> Настройки системы</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('settings')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('settings')">□</button>
+                    <button class="window-control" onclick="closeWindow('settings')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="settings-layout">
+                    <div class="settings-sidebar">
+                        <div class="settings-category active" data-category="personalization">
+                            <i class="fas fa-palette"></i>
+                            <span>Персонализация</span>
+                        </div>
+                        <div class="settings-category" data-category="account">
+                            <img src="https://i.ibb.co/HT71Ghdd/photo-output.png" style="width: 20px; height: 20px;">
+                            <span>Аккаунт</span>
+                        </div>
+                        <div class="settings-category" data-category="system">
+                            <i class="fas fa-desktop"></i>
+                            <span>Система</span>
+                        </div>
+                        <div class="settings-category" data-category="sync">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Синхронизация</span>
+                        </div>
+                        <div class="settings-category" data-category="devices">
+                            <i class="fas fa-plug"></i>
+                            <span>Устройства</span>
+                        </div>
+                        <div class="settings-category" data-category="apps">
+                            <i class="fas fa-th-large"></i>
+                            <span>Приложения</span>
+                        </div>
+                        <div class="settings-category" data-category="updates">
+                            <img src="https://i.ibb.co/x8sWmNMy/photo-output.png" style="width: 20px; height: 20px;">
+                            <span>Обновления</span>
+                        </div>
+                        <div class="settings-category" data-category="developer">
+                            <i class="fas fa-code"></i>
+                            <span>Для разработчиков</span>
+                        </div>
+                        <div class="settings-category" data-category="about">
+                            <i class="fas fa-info-circle"></i>
+                            <span>О системе</span>
+                        </div>
+                    </div>
+                    <div class="settings-content" id="settingsContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Терминал -->
+        <div class="window" id="terminal">
+            <div class="window-header">
+                <span><i class="fas fa-terminal"></i> Терминал</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('terminal')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('terminal')">□</button>
+                    <button class="window-control" onclick="closeWindow('terminal')">×</button>
+                </div>
+            </div>
+            <div class="window-content terminal-content">
+                <div class="terminal-output" id="terminalOutput"></div>
+                <div class="terminal-input-line">
+                    <span class="prompt">user@soiav:~$</span>
+                    <input type="text" id="terminalInput" onkeypress="handleTerminalCommand(event)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Календарь -->
+        <div class="window" id="calendar">
+            <div class="window-header">
+                <span><i class="fas fa-calendar-alt"></i> Календарь</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('calendar')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('calendar')">□</button>
+                    <button class="window-control" onclick="closeWindow('calendar')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="calendar-app">
+                    <div class="calendar-month-header">
+                        <button class="calendar-nav-btn" onclick="changeAppCalendarMonth(-1)">‹</button>
+                        <div class="calendar-month-title" id="appCalendarMonth"></div>
+                        <button class="calendar-nav-btn" onclick="changeAppCalendarMonth(1)">›</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+                    </div>
+                    <div class="calendar-days-grid" id="appCalendarDays"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Музыка -->
+        <div class="window" id="music">
+            <div class="window-header">
+                <span><i class="fas fa-music"></i> Музыка</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('music')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('music')">□</button>
+                    <button class="window-control" onclick="closeWindow('music')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="music-player">
+                    <div class="now-playing">
+                        <div class="album-art"></div>
+                        <div class="track-info">
+                            <div class="track-title">Не воспроизводится</div>
+                            <div class="track-artist">Выберите трек</div>
+                        </div>
+                    </div>
+                    <div class="playlist" id="playlist"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Просмотр файлов -->
+        <div class="window" id="fileViewer">
+            <div class="window-header">
+                <span><i class="fas fa-file"></i> Просмотр файла</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('fileViewer')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('fileViewer')">□</button>
+                    <button class="window-control" onclick="closeWindow('fileViewer')">×</button>
+                </div>
+            </div>
+            <div class="window-content" id="fileViewerContent"></div>
+        </div>
+
+        <!-- SSAP Компилятор -->
+        <div class="window" id="ssapCompiler">
+            <div class="window-header">
+                <span><i class="fas fa-code"></i> SSAP Компилятор</span>
+                <div class="window-controls">
+                    <button class="window-control" onclick="minimizeWindow('ssapCompiler')">–</button>
+                    <button class="window-control" onclick="maximizeWindow('ssapCompiler')">□</button>
+                    <button class="window-control" onclick="closeWindow('ssapCompiler')">×</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="compiler-toolbar">
+                    <button class="toolbar-btn" onclick="newSSAPFile()"><i class="fas fa-file"></i> Новый</button>
+                    <button class="toolbar-btn" onclick="openSSAPFile()"><i class="fas fa-folder-open"></i> Открыть</button>
+                    <button class="toolbar-btn" onclick="saveSSAPFile()"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="toolbar-btn" onclick="compileSSAP()"><i class="fas fa-play"></i> Запустить</button>
+                    <button class="toolbar-btn" onclick="publishToStore()"><i class="fas fa-upload"></i> Опубликовать</button>
+                </div>
+                <textarea id="ssapCodeEditor" placeholder="// Введите ваш SSAP код здесь..."></textarea>
+                <div class="compiler-output" id="compilerOutput"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Панель задач -->
+    <div class="taskbar" id="taskbar">
+        <div class="start-btn" onclick="toggleStartMenu()">
+            <div class="start-icon">S</div>
+        </div>
+        
+        <div class="taskbar-apps" id="taskbarApps"></div>
+        
+        <div class="system-tray">
+            <div class="tray-icon" onclick="toggleNotificationCenter()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </div>
+            <div class="tray-icon" onclick="toggleSideMenu()">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+            <div class="time-display" onclick="toggleCalendar()">
+                <div class="time" id="currentTime"></div>
+                <div class="date" id="currentDate"></div>
+            </div>
+            <div class="account-btn" onclick="toggleAccountMenu()">
+                <img src="https://i.ibb.co/HT71Ghdd/photo-output.png" class="user-avatar-small" alt="Аватар">
+            </div>
+        </div>
+    </div>
+
+    <!-- Меню Пуск (новый дизайн) -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-menu-header">
+            <div class="user-info">
+                <img src="https://i.ibb.co/HT71Ghdd/photo-output.png" class="user-avatar-large" alt="Аватар">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Пользователь Soiav</div>
+                    <div class="user-email" id="userEmail">user@soiav.com</div>
+                </div>
+            </div>
+            <button class="start-menu-close" onclick="toggleStartMenu()">×</button>
+        </div>
+        
+        <div class="start-menu-content">
+            <div class="start-menu-apps">
+                <div class="start-menu-item" onclick="openApp('fileExplorer')">
+                    <img src="https://i.ibb.co/Z6BGYQLL/photo-output.png" style="width: 24px; height: 24px;">
+                    <span>Файлы</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('browser')">
+                    <img src="https://i.ibb.co/Rkk0W5Nz/photo-output.png" style="width: 24px; height: 24px;">
+                    <span>Браузер</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('store')">
+                    <img src="https://i.ibb.co/m5SqS4nc/photo-output.png" style="width: 24px; height: 24px;">
+                    <span>Магазин</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('mail')">
+                    <img src="https://i.ibb.co/39h7Yjqs/photo-output.png" style="width: 24px; height: 24px;">
+                    <span>Почта</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('photos')">
+                    <img src="https://i.ibb.co/FqYXmK2H/photo-output.png" style="width: 24px; height: 24px;">
+                    <span>Фото</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('weather')">
+                    <img src="https://i.ibb.co/216zwxdv/photo-output.png" style="width: 24px; height: 24px;">
+                    <span>Погода</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Настройки</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('terminal')">
+                    <i class="fas fa-terminal"></i>
+                    <span>Терминал</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('calendar')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Календарь</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('music')">
+                    <i class="fas fa-music"></i>
+                    <span>Музыка</span>
+                </div>
+                <div class="start-menu-item" onclick="openApp('ssapCompiler')">
+                    <i class="fas fa-code"></i>
+                    <span>SSAP Компилятор</span>
+                </div>
+            </div>
+            
+            <div class="start-menu-right">
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="toggleWiFi()">
+                        <i class="fas fa-wifi"></i>
+                        <span>Wi-Fi</span>
+                    </div>
+                    <div class="quick-action" onclick="toggleBluetooth()">
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth</span>
+                    </div>
+                    <div class="quick-action" onclick="toggleDarkMode()">
+                        <i class="fas fa-moon"></i>
+                        <span>Темная тема</span>
+                    </div>
+                    <div class="quick-action" onclick="syncAll()">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Синхр.</span>
+                    </div>
+                </div>
+                
+                <div class="power-options">
+                    <div class="power-option" onclick="lockScreen()">
+                        <i class="fas fa-lock"></i>
+                        <span>Заблокировать</span>
+                    </div>
+                    <div class="power-option" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Выйти</span>
+                    </div>
+                    <div class="power-option" onclick="showShutdownMenu()">
+                        <i class="fas fa-power-off"></i>
+                        <span>Питание</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Боковое меню -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <h3>Быстрые настройки</h3>
+            <button class="close-btn" onclick="toggleSideMenu()">×</button>
+        </div>
+        <div class="side-menu-content">
+            <div class="quick-settings-grid">
+                <div class="quick-setting-item" onclick="toggleWiFi()">
+                    <i class="fas fa-wifi"></i>
+                    <span>Wi-Fi</span>
+                    <div class="toggle-switch" id="wifiToggle"></div>
+                </div>
+                <div class="quick-setting-item" onclick="toggleBluetooth()">
+                    <i class="fas fa-bluetooth"></i>
+                    <span>Bluetooth</span>
+                    <div class="toggle-switch" id="bluetoothToggle"></div>
+                </div>
+                <div class="quick-setting-item" onclick="toggleAirplane()">
+                    <i class="fas fa-plane"></i>
+                    <span>Режим полета</span>
+                    <div class="toggle-switch" id="airplaneToggle"></div>
+                </div>
+                <div class="quick-setting-item" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon"></i>
+                    <span>Темный режим</span>
+                    <div class="toggle-switch" id="darkModeToggle"></div>
+                </div>
+            </div>
+            
+            <div class="slider-container">
+                <label>Яркость</label>
+                <input type="range" min="0" max="100" value="80" class="slider" id="brightnessSlider">
+            </div>
+            
+            <div class="slider-container">
+                <label>Громкость</label>
+                <input type="range" min="0" max="100" value="60" class="slider" id="volumeSlider">
+            </div>
+            
+            <div class="sync-status">
+                <i class="fas fa-cloud"></i>
+                <span>SID Cloud</span>
+                <span class="status-badge" id="syncStatus">Синхронизировано</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Центр уведомлений -->
+    <div class="notification-center" id="notificationCenter">
+        <div class="nc-header">
+            <h3>Уведомления</h3>
+            <button class="nc-close" onclick="toggleNotificationCenter()">×</button>
+        </div>
+        <div class="notifications-list" id="notificationsList"></div>
+    </div>
+
+    <!-- Меню аккаунта -->
+    <div class="account-menu" id="accountMenu">
+        <div class="account-header">
+            <img src="https://i.ibb.co/HT71Ghdd/photo-output.png" class="user-avatar" alt="Аватар">
+            <div class="user-info">
+                <div class="user-name" id="accountUserName">Пользователь Soiav</div>
+                <div class="user-email" id="accountUserEmail">user@soiav.com</div>
+            </div>
+        </div>
+        <div class="account-actions">
+            <div class="account-action" onclick="openApp('settings'); showAccountSettings()">
+                <i class="fas fa-user-cog"></i>
+                <span>Управление аккаунтом</span>
+            </div>
+            <div class="account-action" onclick="syncAll()">
+                <i class="fas fa-sync-alt"></i>
+                <span>Синхронизировать</span>
+            </div>
+            <div class="account-action" onclick="lockScreen()">
+                <i class="fas fa-lock"></i>
+                <span>Заблокировать</span>
+            </div>
+            <div class="account-action" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Выйти</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Календарь (попап) -->
+    <div class="calendar-popup" id="calendarPopup">
+        <div class="calendar-header">
+            <button class="calendar-nav" onclick="changeCalendarMonth(-1)">‹</button>
+            <div class="calendar-month" id="calendarMonth"></div>
+            <button class="calendar-nav" onclick="changeCalendarMonth(1)">›</button>
+        </div>
+        <div class="calendar-weekdays">
+            <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
