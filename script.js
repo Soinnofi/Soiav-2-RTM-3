@@ -5003,3 +5003,590 @@ renderOnlineApps = function(apps) {
         appsGrid.appendChild(card);
     });
 };
+// ================== ОБНОВЛЕНИЕ BUILD 6032 ==================
+
+// ================== НОВЫЙ БРАУЗЕР ==================
+let browserTabs = [{ url: 'https://google.com', title: 'Google' }];
+let browserHistory = ['https://google.com'];
+let browserHistoryIndex = 0;
+
+function openBrowserNew() {
+    openApp('browserNew');
+    document.getElementById('browserFrame').src = 'https://google.com';
+}
+
+function addBrowserTab() {
+    const tabsContainer = document.getElementById('browserTabs');
+    const tab = document.createElement('div');
+    tab.className = 'browser-tab';
+    const index = browserTabs.length;
+    tab.innerHTML = `<span>Новая вкладка</span><button class="tab-close" onclick="closeBrowserTab(event, ${index})">×</button>`;
+    tab.onclick = () => activateBrowserTab(index);
+    tabsContainer.appendChild(tab);
+    browserTabs.push({ url: 'https://google.com', title: 'Новая вкладка' });
+    activateBrowserTab(index);
+}
+
+function closeBrowserTab(e, index) {
+    e.stopPropagation();
+    if (browserTabs.length === 1) return;
+    browserTabs.splice(index, 1);
+    const tabs = document.querySelectorAll('.browser-tab');
+    tabs[index].remove();
+    activateBrowserTab(0);
+}
+
+function activateBrowserTab(index) {
+    document.querySelectorAll('.browser-tab').forEach(t => t.classList.remove('active'));
+    const tabs = document.querySelectorAll('.browser-tab');
+    if (tabs[index]) tabs[index].classList.add('active');
+    if (browserTabs[index]) {
+        document.getElementById('browserFrame').src = browserTabs[index].url;
+        document.getElementById('browserUrlNew').value = browserTabs[index].url;
+    }
+}
+
+function navigateBrowserNew() {
+    const url = document.getElementById('browserUrlNew').value.trim();
+    if (!url) return;
+    
+    let finalUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        finalUrl = 'https://' + url;
+    }
+    
+    document.getElementById('browserFrame').src = finalUrl;
+    document.getElementById('browserUrlNew').value = finalUrl;
+    
+    browserHistory.push(finalUrl);
+    browserHistoryIndex = browserHistory.length - 1;
+    
+    const activeTab = document.querySelector('.browser-tab.active');
+    if (activeTab) {
+        const title = finalUrl.replace('https://', '').replace('http://', '').split('/')[0];
+        activeTab.querySelector('span').textContent = title || 'Новая вкладка';
+        const index = Array.from(document.querySelectorAll('.browser-tab')).indexOf(activeTab);
+        if (browserTabs[index]) browserTabs[index].url = finalUrl;
+    }
+}
+
+function refreshBrowserNew() {
+    const frame = document.getElementById('browserFrame');
+    frame.src = frame.src;
+    showNotification('Браузер', 'Страница обновлена');
+}
+
+function goBackBrowser() {
+    if (browserHistoryIndex > 0) {
+        browserHistoryIndex--;
+        const url = browserHistory[browserHistoryIndex];
+        document.getElementById('browserFrame').src = url;
+        document.getElementById('browserUrlNew').value = url;
+    }
+}
+
+function goForwardBrowser() {
+    if (browserHistoryIndex < browserHistory.length - 1) {
+        browserHistoryIndex++;
+        const url = browserHistory[browserHistoryIndex];
+        document.getElementById('browserFrame').src = url;
+        document.getElementById('browserUrlNew').value = url;
+    }
+}
+
+function goHomeBrowser() {
+    document.getElementById('browserFrame').src = 'https://google.com';
+    document.getElementById('browserUrlNew').value = 'https://google.com';
+}
+
+// Обработка Enter в адресной строке
+document.addEventListener('DOMContentLoaded', function() {
+    const urlInput = document.getElementById('browserUrlNew');
+    if (urlInput) {
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') navigateBrowserNew();
+        });
+    }
+});
+
+// ================== НОВЫЙ ПЛЕЕР ==================
+let playerTracks = [
+    { title: 'Summer Vibes', artist: 'Artist One', duration: 225 },
+    { title: 'Night Drive', artist: 'Artist Two', duration: 180 },
+    { title: 'Morning Light', artist: 'Artist Three', duration: 210 },
+    { title: 'Urban Flow', artist: 'Artist Four', duration: 195 }
+];
+let playerCurrentTrack = 0;
+let playerIsPlaying = false;
+let playerProgress = 0;
+let playerInterval = null;
+
+function openPlayerNew() {
+    openApp('playerNew');
+    updatePlayerUI();
+}
+
+function playerPlayPause() {
+    playerIsPlaying = !playerIsPlaying;
+    const btn = document.getElementById('playerPlayBtn');
+    btn.innerHTML = `<i class="fas fa-${playerIsPlaying ? 'pause' : 'play'}"></i>`;
+    
+    if (playerIsPlaying) {
+        playerInterval = setInterval(() => {
+            playerProgress += 0.5;
+            if (playerProgress >= 100) {
+                playerProgress = 0;
+                playerNext();
+            }
+            document.getElementById('playerProgress').value = playerProgress;
+            const current = Math.floor((playerProgress / 100) * playerTracks[playerCurrentTrack].duration);
+            document.getElementById('playerCurrentTime').textContent = formatTime(current);
+        }, 100);
+    } else {
+        clearInterval(playerInterval);
+    }
+}
+
+function playerPrev() {
+    playerCurrentTrack = (playerCurrentTrack - 1 + playerTracks.length) % playerTracks.length;
+    playerProgress = 0;
+    updatePlayerUI();
+}
+
+function playerNext() {
+    playerCurrentTrack = (playerCurrentTrack + 1) % playerTracks.length;
+    playerProgress = 0;
+    updatePlayerUI();
+}
+
+function playerPlayTrack(index) {
+    playerCurrentTrack = index;
+    playerProgress = 0;
+    updatePlayerUI();
+    if (!playerIsPlaying) playerPlayPause();
+}
+
+function playerVolume() {
+    showNotification('Плеер', 'Громкость: 80%');
+}
+
+function playerShuffle() {
+    showNotification('Плеер', 'Перемешивание включено');
+}
+
+function playerRepeat() {
+    showNotification('Плеер', 'Повтор включен');
+}
+
+function updatePlayerUI() {
+    const track = playerTracks[playerCurrentTrack];
+    document.querySelectorAll('#playerPlaylist .playlist-item').forEach(item => item.classList.remove('active'));
+    const items = document.querySelectorAll('#playerPlaylist .playlist-item');
+    if (items[playerCurrentTrack]) items[playerCurrentTrack].classList.add('active');
+    document.getElementById('playerTotalTime').textContent = formatTime(track.duration);
+    document.getElementById('playerProgress').value = 0;
+    document.getElementById('playerCurrentTime').textContent = '0:00';
+    
+    // Визуализатор
+    const viz = document.getElementById('playerVisualizer');
+    viz.innerHTML = '';
+    for (let i = 0; i < 40; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'viz-bar';
+        bar.style.height = Math.random() * 60 + 20 + 'px';
+        viz.appendChild(bar);
+    }
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// ================== НОВЫЙ ТЕРМИНАЛ ==================
+function openTerminalNew() {
+    openApp('terminalNew');
+}
+
+function handleTerminalNew(event) {
+    if (event.key === 'Enter') {
+        const input = document.getElementById('terminalInputNew');
+        const output = document.getElementById('terminalOutputNew');
+        const cmd = input.value.trim();
+        
+        if (cmd) {
+            output.innerHTML += `<div class="terminal-line"><span class="prompt">user@soiav:~$</span> ${cmd}</div>`;
+            
+            const lowerCmd = cmd.toLowerCase();
+            if (lowerCmd === 'help') {
+                output.innerHTML += `
+                    <div class="terminal-line">Доступные команды:</div>
+                    <div class="terminal-line">  <span class="cmd">help</span> - помощь</div>
+                    <div class="terminal-line">  <span class="cmd">clear</span> - очистить</div>
+                    <div class="terminal-line">  <span class="cmd">date</span> - дата</div>
+                    <div class="terminal-line">  <span class="cmd">time</span> - время</div>
+                    <div class="terminal-line">  <span class="cmd">whoami</span> - пользователь</div>
+                    <div class="terminal-line">  <span class="cmd">ls</span> - список файлов</div>
+                    <div class="terminal-line">  <span class="cmd">version</span> - версия системы</div>
+                    <div class="terminal-line">  <span class="cmd">echo [текст]</span> - вывод текста</div>
+                    <div class="terminal-line">  <span class="cmd">neofetch</span> - информация о системе</div>
+                    <div class="terminal-line">  <span class="cmd">calc</span> - открыть калькулятор</div>
+                    <div class="terminal-line">  <span class="cmd">browser</span> - открыть браузер</div>
+                `;
+            } else if (lowerCmd === 'clear') {
+                output.innerHTML = '';
+            } else if (lowerCmd === 'date') {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">${new Date().toLocaleDateString('ru-RU')}</span></div>`;
+            } else if (lowerCmd === 'time') {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">${new Date().toLocaleTimeString('ru-RU')}</span></div>`;
+            } else if (lowerCmd === 'whoami') {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">${currentUser.name}</span></div>`;
+            } else if (lowerCmd === 'ls') {
+                output.innerHTML += `
+                    <div class="terminal-line">📁 Документы/</div>
+                    <div class="terminal-line">📁 Загрузки/</div>
+                    <div class="terminal-line">📁 Музыка/</div>
+                    <div class="terminal-line">📁 Видео/</div>
+                    <div class="terminal-line">📁 Изображения/</div>
+                    <div class="terminal-line">📄 README.txt</div>
+                    <div class="terminal-line">📄 config.ssap</div>
+                `;
+            } else if (lowerCmd === 'version') {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">Soiav 2 RTM build 6032</span></div>`;
+            } else if (lowerCmd === 'neofetch') {
+                output.innerHTML += `
+                    <div class="terminal-line" style="color:#00ff00;white-space:pre;">
+╔═══════════════════════════════════════╗
+║   Soiav 2 RTM build 6032             ║
+║   OS: Soiav OS 64-bit                ║
+║   Kernel: Soiav Kernel 5.15          ║
+║   Shell: Soiav Shell v2.0            ║
+║   Theme: ${document.documentElement.getAttribute('data-theme') || 'light'}                    ║
+║   User: ${currentUser.name} ║
+╚═══════════════════════════════════════╝
+                    </div>
+                `;
+            } else if (lowerCmd === 'calc') {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">Открываю калькулятор...</span></div>`;
+                setTimeout(() => openApp('calculatorNew'), 500);
+            } else if (lowerCmd === 'browser') {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">Открываю браузер...</span></div>`;
+                setTimeout(() => openBrowserNew(), 500);
+            } else if (lowerCmd.startsWith('echo ')) {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-success">${cmd.substring(5)}</span></div>`;
+            } else {
+                output.innerHTML += `<div class="terminal-line"><span class="cmd-error">Команда не найдена: ${cmd}</span></div>`;
+            }
+            
+            input.value = '';
+            output.scrollTop = output.scrollHeight;
+        }
+    }
+}
+
+// ================== НОВЫЙ КАЛЬКУЛЯТОР ==================
+let calcDisplay = '0';
+let calcExpression = '';
+let calcResult = '';
+
+function openCalculatorNew() {
+    openApp('calculatorNew');
+    calcDisplay = '0';
+    document.getElementById('calcDisplay').textContent = '0';
+}
+
+function calcInput(value) {
+    const display = document.getElementById('calcDisplay');
+    
+    if (value === 'C') {
+        calcDisplay = '0';
+        calcExpression = '';
+        display.textContent = '0';
+        return;
+    }
+    
+    if (value === '±') {
+        if (calcDisplay.startsWith('-')) {
+            calcDisplay = calcDisplay.substring(1);
+        } else if (calcDisplay !== '0') {
+            calcDisplay = '-' + calcDisplay;
+        }
+        display.textContent = calcDisplay;
+        return;
+    }
+    
+    if (value === '%') {
+        const num = parseFloat(calcDisplay);
+        calcDisplay = (num / 100).toString();
+        display.textContent = calcDisplay;
+        return;
+    }
+    
+    if (['+', '−', '×', '÷'].includes(value)) {
+        if (calcExpression && !calcExpression.endsWith(' ')) {
+            calcCalculate();
+        }
+        calcExpression = calcDisplay + ' ' + value + ' ';
+        calcDisplay = '0';
+        display.textContent = '0';
+        return;
+    }
+    
+    if (value === '.') {
+        if (!calcDisplay.includes('.')) {
+            calcDisplay += '.';
+        }
+        display.textContent = calcDisplay;
+        return;
+    }
+    
+    if (calcDisplay === '0' && value !== '.') {
+        calcDisplay = value;
+    } else {
+        calcDisplay += value;
+    }
+    display.textContent = calcDisplay;
+}
+
+function calcCalculate() {
+    const display = document.getElementById('calcDisplay');
+    if (!calcExpression) return;
+    
+    const expression = calcExpression + calcDisplay;
+    const parts = expression.split(' ');
+    const num1 = parseFloat(parts[0]);
+    const operator = parts[1];
+    const num2 = parseFloat(parts[2]);
+    
+    if (isNaN(num1) || isNaN(num2)) return;
+    
+    let result = 0;
+    switch(operator) {
+        case '+': result = num1 + num2; break;
+        case '−': result = num1 - num2; break;
+        case '×': result = num1 * num2; break;
+        case '÷': result = num2 !== 0 ? num1 / num2 : 'Ошибка'; break;
+        default: return;
+    }
+    
+    if (result === 'Ошибка') {
+        display.textContent = 'Ошибка';
+        calcDisplay = '0';
+        calcExpression = '';
+        return;
+    }
+    
+    calcDisplay = result.toString();
+    display.textContent = calcDisplay;
+    calcExpression = '';
+}
+
+// ================== НОВАЯ ПАПКА ==================
+function openFolderNew() {
+    openApp('folderNew');
+}
+
+function folderNewFile() {
+    showNotification('Папка', 'Создан новый файл');
+}
+
+function folderNewFolder() {
+    showNotification('Папка', 'Создана новая папка');
+}
+
+function folderRefresh() {
+    showNotification('Папка', 'Обновлено');
+}
+
+function folderOpen(name) {
+    showNotification('Папка', `Открыта папка: ${name}`);
+}
+
+// ================== ОБНОВЛЕННЫЙ МАГАЗИН ==================
+
+// Проверка сервера при запуске
+async function checkStoreServer() {
+    try {
+        const response = await fetch('http://localhost:5000/api/store/stats');
+        if (response.ok) {
+            storeServerConnected = true;
+            console.log('✅ Сервер магазина подключен');
+            return true;
+        }
+    } catch(e) {
+        console.log('❌ Сервер магазина не доступен');
+    }
+    storeServerConnected = false;
+    return false;
+}
+
+// Загрузка приложений
+async function loadStoreApps(category = 'all', search = '') {
+    const grid = document.getElementById('appsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '<div class="store-loading"><div class="spinner"></div><p>Загрузка приложений...</p></div>';
+    
+    let apps = [];
+    
+    if (storeServerConnected) {
+        try {
+            const url = `http://localhost:5000/api/store/apps?category=${category}&search=${encodeURIComponent(search)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            apps = data.items || [];
+        } catch(e) {
+            apps = getLocalApps();
+        }
+    } else {
+        apps = getLocalApps();
+    }
+    
+    renderStoreApps(apps);
+}
+
+function getLocalApps() {
+    return [
+        { id: "calc", name: "Калькулятор", price: 0, is_free: true, rating: 4.5, downloads: 1234, size: "2 MB", icon: "fa-calculator", category: "utilities", description: "Мощный калькулятор с историей" },
+        { id: "notepad", name: "Блокнот", price: 0, is_free: true, rating: 4.3, downloads: 5678, size: "1 MB", icon: "fa-edit", category: "utilities", description: "Текстовый редактор с подсветкой" },
+        { id: "snake", name: "Змейка 3D", price: 0, is_free: true, rating: 4.7, downloads: 3456, size: "3 MB", icon: "fa-gamepad", category: "games", description: "Классическая игра в 3D" },
+        { id: "tetris", name: "Тетрис", price: 99, is_free: false, rating: 4.8, downloads: 7890, size: "5 MB", icon: "fa-th-large", category: "games", description: "Головоломка с новыми уровнями" },
+        { id: "editor", name: "SSAP Editor", price: 0, is_free: true, rating: 4.9, downloads: 4321, size: "8 MB", icon: "fa-code", category: "dev", description: "Редактор кода SSAP" },
+        { id: "player", name: "Media Player", price: 0, is_free: true, rating: 4.6, downloads: 2345, size: "6 MB", icon: "fa-music", category: "multimedia", description: "Мощный аудиоплеер" }
+    ];
+}
+
+function renderStoreApps(apps) {
+    const grid = document.getElementById('appsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    apps.forEach(app => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.innerHTML = `
+            <div class="app-icon"><i class="fas ${app.icon || 'fa-app-store'}"></i></div>
+            <div class="app-title">${app.name}</div>
+            <div class="app-desc">${app.description || ''}</div>
+            <div class="app-meta">
+                <span>${app.size || 'N/A'}</span>
+                <span>⭐ ${app.rating || 0}</span>
+                <span>📥 ${(app.downloads || 0).toLocaleString()}</span>
+            </div>
+            <button class="install-btn" onclick="event.stopPropagation(); installStoreApp('${app.id}')">
+                ${app.is_free ? 'Бесплатно' : `${app.price} ₽`}
+            </button>
+        `;
+        card.onclick = () => showAppDetailsModal(app);
+        grid.appendChild(card);
+    });
+}
+
+function installStoreApp(appId) {
+    const app = getLocalApps().find(a => a.id === appId);
+    if (!app) return;
+    
+    showNotification('Магазин', `Установка ${app.name}...`);
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 10;
+        if (progress >= 100) {
+            clearInterval(interval);
+            if (!installedApps.has(appId)) {
+                installedApps.add(appId);
+                createDesktopIconForStoreApp(app);
+                showNotification('Магазин', `${app.name} установлен!`);
+            }
+        }
+    }, 200);
+}
+
+function createDesktopIconForStoreApp(app) {
+    const container = document.querySelector('.desktop-icons');
+    if (!container || document.querySelector(`.desktop-icon[data-app="${app.id}"]`)) return;
+    
+    const icon = document.createElement('div');
+    icon.className = 'desktop-icon';
+    icon.setAttribute('data-app', app.id);
+    icon.innerHTML = `<i class="fas ${app.icon}"></i><span>${app.name}</span>`;
+    icon.onclick = () => showNotification(app.name, 'Приложение запущено (демо)');
+    container.appendChild(icon);
+}
+
+function showAppDetailsModal(app) {
+    let modal = document.getElementById('appDetailsModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'appDetailsModal';
+        modal.className = 'app-details-modal';
+        document.body.appendChild(modal);
+    }
+    
+    modal.innerHTML = `
+        <div class="app-details-header">
+            <i class="fas ${app.icon || 'fa-app-store'}"></i>
+            <h2>${app.name}</h2>
+        </div>
+        <div class="app-details-body">
+            <p>${app.description || 'Нет описания'}</p>
+            <div class="app-details-features">
+                <span class="feature-tag"><i class="fas fa-star"></i> ${app.rating || 0}</span>
+                <span class="feature-tag"><i class="fas fa-download"></i> ${(app.downloads || 0).toLocaleString()}</span>
+                <span class="feature-tag"><i class="fas fa-hdd"></i> ${app.size || 'N/A'}</span>
+                <span class="feature-tag"><i class="fas fa-tag"></i> ${app.is_free ? 'Бесплатно' : `${app.price} ₽`}</span>
+            </div>
+        </div>
+        <div class="app-details-footer">
+            <button class="setup-btn" onclick="installStoreApp('${app.id}'); closeAppDetailsModal()">Установить</button>
+            <button class="setup-btn secondary" onclick="closeAppDetailsModal()">Закрыть</button>
+        </div>
+    `;
+    modal.style.display = 'block';
+}
+
+function closeAppDetailsModal() {
+    const modal = document.getElementById('appDetailsModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// ================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ==================
+
+// Функция для добавления новых иконок в меню пуск (без эмодзи)
+function addNewStartMenuItems() {
+    const startApps = document.querySelector('.start-menu-apps');
+    if (!startApps) return;
+    
+    const newItems = [
+        { name: 'Браузер', icon: 'fa-globe', action: 'browserNew' },
+        { name: 'Плеер', icon: 'fa-headphones', action: 'playerNew' },
+        { name: 'Терминал', icon: 'fa-terminal', action: 'terminalNew' },
+        { name: 'Калькулятор', icon: 'fa-calculator', action: 'calculatorNew' },
+        { name: 'Мои документы', icon: 'fa-folder-open', action: 'folderNew' }
+    ];
+    
+    newItems.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'start-menu-item';
+        el.innerHTML = `<i class="fas ${item.icon}"></i><span>${item.name}</span>`;
+        el.onclick = () => {
+            if (item.action === 'browserNew') openBrowserNew();
+            else if (item.action === 'playerNew') openPlayerNew();
+            else if (item.action === 'terminalNew') openTerminalNew();
+            else if (item.action === 'calculatorNew') openCalculatorNew();
+            else if (item.action === 'folderNew') openFolderNew();
+            else openApp(item.action);
+            toggleStartMenu();
+        };
+        startApps.appendChild(el);
+    });
+}
+
+// Запуск при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        addNewStartMenuItems();
+        checkStoreServer();
+    }, 500);
+});
