@@ -868,5 +868,186 @@
     </div>
 
     <script src="script.js"></script>
+    <!-- ================== ОБНОВЛЕНИЕ BUILD 6032 ================== -->
+
+<!-- НОВЫЙ БРАУЗЕР (РАБОЧИЙ) -->
+<div class="window" id="browserNew">
+    <div class="window-header">
+        <span><i class="fas fa-globe" style="margin-right:8px;color:white;"></i> Soiav Browser</span>
+        <div class="window-controls">
+            <button class="window-control" onclick="minimizeWindow('browserNew')">–</button>
+            <button class="window-control" onclick="maximizeWindow('browserNew')">□</button>
+            <button class="window-control" onclick="closeWindow('browserNew')">×</button>
+        </div>
+    </div>
+    <div class="window-content">
+        <div class="browser-toolbar">
+            <div class="browser-tabs" id="browserTabs">
+                <div class="browser-tab active" data-tab="0">
+                    <span>Новая вкладка</span>
+                    <button class="tab-close" onclick="closeBrowserTab(event, 0)">×</button>
+                </div>
+            </div>
+            <div class="browser-controls-new">
+                <button onclick="addBrowserTab()" title="Новая вкладка"><i class="fas fa-plus"></i></button>
+                <button onclick="goBackBrowser()" title="Назад"><i class="fas fa-arrow-left"></i></button>
+                <button onclick="goForwardBrowser()" title="Вперед"><i class="fas fa-arrow-right"></i></button>
+                <button onclick="refreshBrowserNew()" title="Обновить"><i class="fas fa-sync-alt"></i></button>
+                <button onclick="goHomeBrowser()" title="Домой"><i class="fas fa-home"></i></button>
+            </div>
+            <div class="browser-address-bar">
+                <input type="text" id="browserUrlNew" placeholder="Введите URL или поисковый запрос..." value="https://google.com">
+                <button onclick="navigateBrowserNew()"><i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        <div class="browser-content-new" id="browserContentNew">
+            <iframe id="browserFrame" src="https://google.com" style="width:100%;height:100%;border:none;border-radius:12px;background:#fff;"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- НОВЫЙ ПЛЕЕР -->
+<div class="window" id="playerNew">
+    <div class="window-header">
+        <span><i class="fas fa-headphones" style="margin-right:8px;color:white;"></i> Soiav Media Player</span>
+        <div class="window-controls">
+            <button class="window-control" onclick="minimizeWindow('playerNew')">–</button>
+            <button class="window-control" onclick="maximizeWindow('playerNew')">□</button>
+            <button class="window-control" onclick="closeWindow('playerNew')">×</button>
+        </div>
+    </div>
+    <div class="window-content player-content">
+        <div class="player-visualizer" id="playerVisualizer"></div>
+        <div class="player-controls">
+            <button onclick="playerPrev()"><i class="fas fa-step-backward"></i></button>
+            <button onclick="playerPlayPause()" id="playerPlayBtn"><i class="fas fa-play"></i></button>
+            <button onclick="playerNext()"><i class="fas fa-step-forward"></i></button>
+            <button onclick="playerVolume()"><i class="fas fa-volume-up"></i></button>
+            <button onclick="playerShuffle()"><i class="fas fa-random"></i></button>
+            <button onclick="playerRepeat()"><i class="fas fa-repeat"></i></button>
+        </div>
+        <div class="player-progress">
+            <span id="playerCurrentTime">0:00</span>
+            <input type="range" id="playerProgress" value="0" max="100">
+            <span id="playerTotalTime">3:45</span>
+        </div>
+        <div class="player-playlist" id="playerPlaylist">
+            <div class="playlist-item active" onclick="playerPlayTrack(0)"><i class="fas fa-music"></i> Трек 1 - Исполнитель</div>
+            <div class="playlist-item" onclick="playerPlayTrack(1)"><i class="fas fa-music"></i> Трек 2 - Исполнитель</div>
+            <div class="playlist-item" onclick="playerPlayTrack(2)"><i class="fas fa-music"></i> Трек 3 - Исполнитель</div>
+            <div class="playlist-item" onclick="playerPlayTrack(3)"><i class="fas fa-music"></i> Трек 4 - Исполнитель</div>
+        </div>
+    </div>
+</div>
+
+<!-- НОВЫЙ ТЕРМИНАЛ -->
+<div class="window" id="terminalNew">
+    <div class="window-header">
+        <span><i class="fas fa-terminal" style="margin-right:8px;color:white;"></i> Soiav Terminal Pro</span>
+        <div class="window-controls">
+            <button class="window-control" onclick="minimizeWindow('terminalNew')">–</button>
+            <button class="window-control" onclick="maximizeWindow('terminalNew')">□</button>
+            <button class="window-control" onclick="closeWindow('terminalNew')">×</button>
+        </div>
+    </div>
+    <div class="window-content terminal-content-new" id="terminalContentNew">
+        <div class="terminal-output-new" id="terminalOutputNew">
+            <div class="terminal-line">╔═══════════════════════════════════════╗</div>
+            <div class="terminal-line">║   Soiav Terminal            ║</div>
+            <div class="terminal-line">║   Build 6032 (RTM)                   ║</div>
+            <div class="terminal-line">╚═══════════════════════════════════════╝</div>
+            <div class="terminal-line"><span class="prompt">user@soiav:~$</span> <span class="cmd-success">Система готова к работе</span></div>
+        </div>
+        <div class="terminal-input-new">
+            <span class="prompt">user@soiav:~$</span>
+            <input type="text" id="terminalInputNew" onkeypress="handleTerminalNew(event)" placeholder="Введите команду...">
+        </div>
+    </div>
+</div>
+
+<!-- НОВЫЙ КАЛЬКУЛЯТОР -->
+<div class="window" id="calculatorNew">
+    <div class="window-header">
+        <span><i class="fas fa-calculator" style="margin-right:8px;color:white;"></i> Калькулятор</span>
+        <div class="window-controls">
+            <button class="window-control" onclick="minimizeWindow('calculatorNew')">–</button>
+            <button class="window-control" onclick="maximizeWindow('calculatorNew')">□</button>
+            <button class="window-control" onclick="closeWindow('calculatorNew')">×</button>
+        </div>
+    </div>
+    <div class="window-content calculator-content">
+        <div class="calc-display" id="calcDisplay">0</div>
+        <div class="calc-buttons">
+            <button onclick="calcInput('C')" class="calc-btn calc-clear">C</button>
+            <button onclick="calcInput('±')" class="calc-btn calc-operator">±</button>
+            <button onclick="calcInput('%')" class="calc-btn calc-operator">%</button>
+            <button onclick="calcInput('÷')" class="calc-btn calc-operator">÷</button>
+            
+            <button onclick="calcInput('7')" class="calc-btn">7</button>
+            <button onclick="calcInput('8')" class="calc-btn">8</button>
+            <button onclick="calcInput('9')" class="calc-btn">9</button>
+            <button onclick="calcInput('×')" class="calc-btn calc-operator">×</button>
+            
+            <button onclick="calcInput('4')" class="calc-btn">4</button>
+            <button onclick="calcInput('5')" class="calc-btn">5</button>
+            <button onclick="calcInput('6')" class="calc-btn">6</button>
+            <button onclick="calcInput('−')" class="calc-btn calc-operator">−</button>
+            
+            <button onclick="calcInput('1')" class="calc-btn">1</button>
+            <button onclick="calcInput('2')" class="calc-btn">2</button>
+            <button onclick="calcInput('3')" class="calc-btn">3</button>
+            <button onclick="calcInput('+')" class="calc-btn calc-operator">+</button>
+            
+            <button onclick="calcInput('0')" class="calc-btn calc-zero">0</button>
+            <button onclick="calcInput('.')" class="calc-btn">.</button>
+            <button onclick="calcCalculate()" class="calc-btn calc-equals">=</button>
+        </div>
+    </div>
+</div>
+
+<!-- НОВОЕ ПРИЛОЖЕНИЕ - ПАПКА -->
+<div class="window" id="folderNew">
+    <div class="window-header">
+        <span><i class="fas fa-folder-open" style="margin-right:8px;color:white;"></i> Мои документы</span>
+        <div class="window-controls">
+            <button class="window-control" onclick="minimizeWindow('folderNew')">–</button>
+            <button class="window-control" onclick="maximizeWindow('folderNew')">□</button>
+            <button class="window-control" onclick="closeWindow('folderNew')">×</button>
+        </div>
+    </div>
+    <div class="window-content folder-content">
+        <div class="folder-toolbar">
+            <button onclick="folderNewFile()"><i class="fas fa-file"></i> Новый файл</button>
+            <button onclick="folderNewFolder()"><i class="fas fa-folder-plus"></i> Новая папка</button>
+            <button onclick="folderRefresh()"><i class="fas fa-sync-alt"></i> Обновить</button>
+        </div>
+        <div class="folder-grid" id="folderGrid">
+            <div class="folder-item" onclick="folderOpen('documents')">
+                <i class="fas fa-folder"></i>
+                <span>Документы</span>
+            </div>
+            <div class="folder-item" onclick="folderOpen('images')">
+                <i class="fas fa-folder"></i>
+                <span>Изображения</span>
+            </div>
+            <div class="folder-item" onclick="folderOpen('music')">
+                <i class="fas fa-folder"></i>
+                <span>Музыка</span>
+            </div>
+            <div class="folder-item" onclick="folderOpen('videos')">
+                <i class="fas fa-folder"></i>
+                <span>Видео</span>
+            </div>
+            <div class="folder-item" onclick="folderOpen('downloads')">
+                <i class="fas fa-folder"></i>
+                <span>Загрузки</span>
+            </div>
+            <div class="folder-item" onclick="folderOpen('cloud')">
+                <i class="fas fa-cloud"></i>
+                <span>SID Cloud</span>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
