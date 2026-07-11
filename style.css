@@ -5038,3 +5038,587 @@ body.start-fullscreen {
     z-index: 19999;
     backdrop-filter: blur(5px);
 }
+/* ================== ОБНОВЛЕНИЕ BUILD 6032 ================== */
+
+/* ================== НОВЫЙ БРАУЗЕР ================== */
+.browser-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.browser-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 4px 0;
+}
+
+.browser-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--transition);
+    min-width: 80px;
+    max-width: 150px;
+    position: relative;
+}
+
+.browser-tab.active {
+    background: var(--bg-secondary);
+    box-shadow: 0 -2px 0 var(--accent-color);
+}
+
+.browser-tab span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.browser-tab .tab-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.browser-tab .tab-close:hover {
+    background: rgba(0,0,0,0.1);
+    color: var(--text-primary);
+}
+
+.browser-controls-new {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.browser-controls-new button {
+    background: var(--bg-tertiary);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.browser-controls-new button:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.browser-address-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.browser-address-bar input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 24px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.browser-address-bar input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.2);
+}
+
+.browser-address-bar button {
+    background: var(--accent-color);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 24px;
+    cursor: pointer;
+    color: white;
+    transition: var(--transition);
+}
+
+.browser-address-bar button:hover {
+    background: var(--accent-hover);
+    transform: scale(1.05);
+}
+
+.browser-content-new {
+    flex: 1;
+    height: calc(100% - 120px);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+/* ================== НОВЫЙ ПЛЕЕР ================== */
+.player-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.player-visualizer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 120px;
+    gap: 4px;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.viz-bar {
+    width: 8px;
+    min-height: 10px;
+    background: var(--accent-color);
+    border-radius: 4px;
+    transition: height 0.3s;
+    animation: vizPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes vizPulse {
+    0% { height: 20px; }
+    100% { height: 80px; }
+}
+
+.player-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.player-controls button {
+    background: var(--bg-tertiary);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-primary);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-controls button:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.player-controls button:active {
+    transform: scale(0.95);
+}
+
+.player-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.player-progress span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 40px;
+}
+
+.player-progress input[type="range"] {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    outline: none;
+}
+
+.player-progress input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 120, 215, 0.4);
+}
+
+.player-playlist {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 200px;
+}
+
+.player-playlist .playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 13px;
+}
+
+.player-playlist .playlist-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.player-playlist .playlist-item.active {
+    background: var(--accent-color);
+    color: white;
+}
+
+.player-playlist .playlist-item i {
+    width: 20px;
+}
+
+/* ================== НОВЫЙ ТЕРМИНАЛ ================== */
+.terminal-content-new {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #1a1a1a;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+}
+
+.terminal-output-new {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #00ff00;
+    line-height: 1.6;
+}
+
+.terminal-output-new .terminal-line {
+    padding: 2px 0;
+}
+
+.terminal-output-new .prompt {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.terminal-output-new .cmd {
+    color: #ffaa00;
+}
+
+.terminal-output-new .cmd-success {
+    color: #4caf50;
+}
+
+.terminal-output-new .cmd-error {
+    color: #ff4444;
+}
+
+.terminal-input-new {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #2d2d2d;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #3d3d3d;
+}
+
+.terminal-input-new .prompt {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.terminal-input-new input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+}
+
+/* ================== НОВЫЙ КАЛЬКУЛЯТОР ================== */
+.calculator-content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.calc-display {
+    background: var(--bg-tertiary);
+    padding: 20px 24px;
+    border-radius: 12px;
+    font-size: 36px;
+    text-align: right;
+    font-weight: 300;
+    margin-bottom: 20px;
+    min-height: 80px;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.calc-btn {
+    padding: 18px 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.calc-btn:hover {
+    transform: scale(1.05);
+    background: var(--accent-color);
+    color: white;
+}
+
+.calc-btn:active {
+    transform: scale(0.95);
+}
+
+.calc-btn.calc-operator {
+    background: var(--accent-color);
+    color: white;
+}
+
+.calc-btn.calc-operator:hover {
+    background: var(--accent-hover);
+}
+
+.calc-btn.calc-clear {
+    background: #ff4444;
+    color: white;
+}
+
+.calc-btn.calc-clear:hover {
+    background: #cc0000;
+}
+
+.calc-btn.calc-equals {
+    background: var(--accent-color);
+    color: white;
+    grid-column: span 1;
+}
+
+.calc-btn.calc-equals:hover {
+    background: var(--accent-hover);
+}
+
+.calc-btn.calc-zero {
+    grid-column: span 2;
+}
+
+/* ================== НОВАЯ ПАПКА ================== */
+.folder-content {
+    padding: 20px;
+}
+
+.folder-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.folder-toolbar button {
+    background: var(--bg-tertiary);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-primary);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.folder-toolbar button:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 16px;
+}
+
+.folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--bg-tertiary);
+    text-align: center;
+}
+
+.folder-item:hover {
+    transform: translateY(-4px) scale(1.02);
+    background: var(--accent-color);
+    color: white;
+    box-shadow: var(--shadow-hover);
+}
+
+.folder-item i {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.folder-item span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ================== МОДАЛЬНОЕ ОКНО ================== */
+.app-details-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-secondary);
+    border-radius: 28px;
+    width: 90%;
+    max-width: 450px;
+    z-index: 20000;
+    box-shadow: var(--shadow);
+    display: none;
+    animation: scaleIn 0.3s ease;
+    overflow: hidden;
+}
+
+.app-details-modal .app-details-header {
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+    padding: 30px;
+    text-align: center;
+    color: white;
+}
+
+.app-details-modal .app-details-header i {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.app-details-modal .app-details-body {
+    padding: 25px;
+}
+
+.app-details-modal .app-details-body p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.app-details-modal .app-details-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.app-details-modal .feature-tag {
+    background: var(--bg-tertiary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.app-details-modal .app-details-footer {
+    padding: 20px;
+    border-top: 1px solid var(--bg-tertiary);
+    display: flex;
+    gap: 10px;
+}
+
+/* ================== АДАПТИВНОСТЬ ================== */
+@media (max-width: 768px) {
+    .browser-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .browser-tab {
+        min-width: 60px;
+        max-width: 100px;
+        font-size: 11px;
+    }
+    
+    .calculator-content {
+        max-width: 100%;
+    }
+    
+    .calc-btn {
+        padding: 14px 8px;
+        font-size: 16px;
+    }
+    
+    .folder-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+    
+    .player-controls button {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .browser-controls-new {
+        gap: 2px;
+    }
+    
+    .browser-controls-new button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .calc-buttons {
+        gap: 6px;
+    }
+    
+    .calc-btn {
+        padding: 12px 6px;
+        font-size: 14px;
+    }
+    
+    .player-visualizer {
+        height: 80px;
+    }
+}
