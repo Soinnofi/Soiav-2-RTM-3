@@ -5590,3 +5590,512 @@ document.addEventListener('DOMContentLoaded', function() {
         checkStoreServer();
     }, 500);
 });
+// ================== НОВЫЕ ПРИЛОЖЕНИЯ ==================
+
+// ===== 1. ЧАТ (MESSENGER) =====
+function openChatApp() {
+    openApp('chatApp');
+}
+
+let chatContacts = [
+    { name: 'Алексей', msg: 'Привет!', time: '12:30', online: true },
+    { name: 'Мария', msg: 'Как дела?', time: '11:15', online: true },
+    { name: 'Дмитрий', msg: 'Встреча завтра', time: 'Вчера', online: false },
+    { name: 'Екатерина', msg: 'Спасибо!', time: 'Вчера', online: false }
+];
+
+let chatMessages = {
+    0: [
+        { text: 'Привет! Как дела?', sent: false, time: '12:25' },
+        { text: 'Привет! Всё отлично, а у тебя?', sent: true, time: '12:27' },
+        { text: 'Тоже хорошо! Что нового?', sent: false, time: '12:30' }
+    ],
+    1: [
+        { text: 'Привет, Мария!', sent: true, time: '11:10' },
+        { text: 'Привет! Как жизнь?', sent: false, time: '11:12' },
+        { text: 'Отлично! А у тебя?', sent: true, time: '11:15' }
+    ],
+    2: [
+        { text: 'Завтра встреча в 10:00', sent: false, time: 'Вчера 18:00' },
+        { text: 'Ок, буду', sent: true, time: 'Вчера 18:05' }
+    ],
+    3: [
+        { text: 'Спасибо за помощь!', sent: false, time: 'Вчера 15:00' },
+        { text: 'Всегда пожалуйста!', sent: true, time: 'Вчера 15:02' }
+    ]
+};
+
+let currentChat = 0;
+
+function selectChat(index) {
+    currentChat = index;
+    document.querySelectorAll('.contact').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.contact')[index].classList.add('active');
+    
+    const contact = chatContacts[index];
+    document.querySelector('.chat-user .chat-user-name').textContent = contact.name;
+    document.querySelector('.chat-user .chat-user-status').textContent = contact.online ? 'В сети' : 'Был(а) недавно';
+    document.querySelector('.chat-user img').src = `https://i.pravatar.cc/40?img=${index + 1}`;
+    
+    renderMessages();
+}
+
+function renderMessages() {
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = '';
+    
+    chatMessages[currentChat].forEach(msg => {
+        const div = document.createElement('div');
+        div.className = `message ${msg.sent ? 'sent' : 'received'}`;
+        div.innerHTML = `
+            <div class="message-text">${msg.text}</div>
+            <span class="message-time">${msg.time}</span>
+        `;
+        container.appendChild(div);
+    });
+    
+    container.scrollTop = container.scrollHeight;
+}
+
+function chatSend(event) {
+    if (event.key === 'Enter') {
+        chatSendMessage();
+    }
+}
+
+function chatSendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const now = new Date();
+    const time = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+    
+    chatMessages[currentChat].push({
+        text: text,
+        sent: true,
+        time: time
+    });
+    
+    renderMessages();
+    input.value = '';
+    
+    // Имитация ответа
+    setTimeout(() => {
+        const responses = ['Понял!', 'Хорошо!', 'Ок', '👍', 'Спасибо!', 'Отлично!'];
+        chatMessages[currentChat].push({
+            text: responses[Math.floor(Math.random() * responses.length)],
+            sent: false,
+            time: new Date().getHours() + ':' + new Date().getMinutes().toString().padStart(2, '0')
+        });
+        renderMessages();
+    }, 1000 + Math.random() * 2000);
+}
+
+function chatEmoji() {
+    const emojis = ['😊', '😂', '❤️', '👍', '🔥', '💪', '🎉', '👋'];
+    const input = document.getElementById('chatInput');
+    input.value += emojis[Math.floor(Math.random() * emojis.length)];
+    input.focus();
+}
+
+// ===== 2. ЗАМЕТКИ =====
+function openNotesApp() {
+    openApp('notesApp');
+}
+
+let notes = [
+    { id: 1, title: 'Список покупок', text: 'Хлеб, Молоко, Яйца, Масло', date: 'Сегодня' },
+    { id: 2, title: 'Идеи для проекта', text: '1. Новый дизайн\n2. Улучшить производительность\n3. Добавить тёмную тему', date: 'Вчера' }
+];
+
+let currentNote = null;
+
+function renderNotes() {
+    const container = document.getElementById('notesList');
+    container.innerHTML = '';
+    
+    notes.forEach(note => {
+        const div = document.createElement('div');
+        div.className = `note-item${currentNote && currentNote.id === note.id ? ' active' : ''}`;
+        div.innerHTML = `
+            <div class="note-title">${note.title}</div>
+            <div class="note-preview">${note.text.substring(0, 30)}${note.text.length > 30 ? '...' : ''}</div>
+            <div class="note-date">${note.date}</div>
+        `;
+        div.onclick = () => selectNote(note.id);
+        container.appendChild(div);
+    });
+}
+
+function selectNote(id) {
+    currentNote = notes.find(n => n.id === id);
+    if (currentNote) {
+        document.getElementById('noteEditor').style.display = 'block';
+        document.getElementById('noteTitle').value = currentNote.title;
+        document.getElementById('noteText').value = currentNote.text;
+        renderNotes();
+    }
+}
+
+function notesNew() {
+    const newNote = {
+        id: Date.now(),
+        title: 'Новая заметка',
+        text: 'Введите текст...',
+        date: 'Сейчас'
+    };
+    notes.unshift(newNote);
+    currentNote = newNote;
+    renderNotes();
+    document.getElementById('noteEditor').style.display = 'block';
+    document.getElementById('noteTitle').value = newNote.title;
+    document.getElementById('noteText').value = newNote.text;
+}
+
+function notesSave() {
+    if (!currentNote) return;
+    currentNote.title = document.getElementById('noteTitle').value || 'Без названия';
+    currentNote.text = document.getElementById('noteText').value || '';
+    currentNote.date = 'Только что';
+    renderNotes();
+    showNotification('Заметки', 'Заметка сохранена');
+}
+
+function notesDelete() {
+    if (!currentNote) return;
+    if (confirm('Удалить заметку?')) {
+        notes = notes.filter(n => n.id !== currentNote.id);
+        currentNote = null;
+        renderNotes();
+        document.getElementById('noteEditor').style.display = 'none';
+        showNotification('Заметки', 'Заметка удалена');
+    }
+}
+
+function notesSearch() {
+    const query = document.getElementById('notesSearch').value.toLowerCase();
+    const container = document.getElementById('notesList');
+    container.innerHTML = '';
+    
+    const filtered = notes.filter(n => 
+        n.title.toLowerCase().includes(query) || 
+        n.text.toLowerCase().includes(query)
+    );
+    
+    filtered.forEach(note => {
+        const div = document.createElement('div');
+        div.className = 'note-item';
+        div.innerHTML = `
+            <div class="note-title">${note.title}</div>
+            <div class="note-preview">${note.text.substring(0, 30)}${note.text.length > 30 ? '...' : ''}</div>
+            <div class="note-date">${note.date}</div>
+        `;
+        div.onclick = () => selectNote(note.id);
+        container.appendChild(div);
+    });
+}
+
+// ===== 3. ПОГОДА =====
+function openWeatherApp() {
+    openApp('weatherApp');
+}
+
+let weatherCities = [
+    { name: 'Москва', temp: 23, condition: 'Солнечно', icon: 'fa-sun', humidity: 65, wind: 3 },
+    { name: 'Санкт-Петербург', temp: 18, condition: 'Облачно', icon: 'fa-cloud', humidity: 78, wind: 5 },
+    { name: 'Новосибирск', temp: 21, condition: 'Ясно', icon: 'fa-sun', humidity: 55, wind: 2 },
+    { name: 'Екатеринбург', temp: 19, condition: 'Дождь', icon: 'fa-cloud-rain', humidity: 82, wind: 4 }
+];
+
+let currentCity = 0;
+let weatherForecast = [
+    { day: 'Пн', temp: 23, icon: 'fa-sun' },
+    { day: 'Вт', temp: 22, icon: 'fa-sun' },
+    { day: 'Ср', temp: 19, icon: 'fa-cloud-sun' },
+    { day: 'Чт', temp: 17, icon: 'fa-cloud-rain' },
+    { day: 'Пт', temp: 20, icon: 'fa-cloud-sun' },
+    { day: 'Сб', temp: 24, icon: 'fa-sun' }
+];
+
+function renderWeather() {
+    const city = weatherCities[currentCity];
+    document.getElementById('weatherCityName').textContent = city.name;
+    document.getElementById('weatherTemp').textContent = city.temp + '°C';
+    document.getElementById('weatherCondition').textContent = city.condition;
+    document.getElementById('weatherIcon').className = `fas ${city.icon}`;
+    document.getElementById('weatherHumidity').textContent = city.humidity + '%';
+    document.getElementById('weatherWind').textContent = city.wind + ' м/с';
+    
+    const forecast = document.getElementById('weatherForecastList');
+    forecast.innerHTML = '';
+    weatherForecast.forEach(day => {
+        const div = document.createElement('div');
+        div.className = 'forecast-item';
+        div.innerHTML = `
+            <div>${day.day}</div>
+            <i class="fas ${day.icon}"></i>
+            <div>${day.temp}°</div>
+        `;
+        forecast.appendChild(div);
+    });
+}
+
+function weatherSearch() {
+    const query = document.getElementById('weatherSearchInput').value.trim();
+    if (!query) return;
+    
+    const found = weatherCities.find(c => c.name.toLowerCase() === query.toLowerCase());
+    if (found) {
+        currentCity = weatherCities.indexOf(found);
+        renderWeather();
+        showNotification('Погода', `Погода в ${found.name}`);
+    } else {
+        showNotification('Погода', 'Город не найден');
+    }
+}
+
+function weatherChangeCity(dir) {
+    currentCity = (currentCity + dir + weatherCities.length) % weatherCities.length;
+    renderWeather();
+}
+
+// ===== 4. ЗАДАЧИ =====
+function openTasksApp() {
+    openApp('tasksApp');
+}
+
+let tasks = [
+    { id: 1, title: 'Завершить проект', done: false, priority: 'high' },
+    { id: 2, title: 'Купить продукты', done: false, priority: 'medium' },
+    { id: 3, title: 'Позвонить маме', done: true, priority: 'low' }
+];
+
+function renderTasks() {
+    const container = document.getElementById('tasksList');
+    container.innerHTML = '';
+    
+    tasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = `task-item${task.done ? ' done' : ''}`;
+        div.innerHTML = `
+            <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${task.id})">
+            <span>${task.title}</span>
+            <span class="task-priority ${task.priority}">${task.priority}</span>
+            <button onclick="deleteTask(${task.id})"><i class="fas fa-times"></i></button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function addTask() {
+    const input = document.getElementById('taskInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    tasks.push({
+        id: Date.now(),
+        title: text,
+        done: false,
+        priority: 'medium'
+    });
+    input.value = '';
+    renderTasks();
+    showNotification('Задачи', 'Задача добавлена');
+}
+
+function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+        task.done = !task.done;
+        renderTasks();
+    }
+}
+
+function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    renderTasks();
+    showNotification('Задачи', 'Задача удалена');
+}
+
+// ===== 5. ПЕРЕВОДЧИК =====
+function openTranslateApp() {
+    openApp('translateApp');
+}
+
+function translateText() {
+    const input = document.getElementById('translateInput').value.trim();
+    if (!input) return;
+    
+    const output = document.getElementById('translateOutput');
+    output.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Перевод...';
+    
+    setTimeout(() => {
+        const translations = {
+            'привет': 'Hello',
+            'мир': 'World',
+            'как дела': 'How are you',
+            'спасибо': 'Thank you',
+            'пока': 'Goodbye',
+            'я люблю': 'I love'
+        };
+        
+        let result = input;
+        for (let [key, val] of Object.entries(translations)) {
+            if (input.toLowerCase().includes(key)) {
+                result = result.replace(new RegExp(key, 'gi'), val);
+                break;
+            }
+        }
+        
+        if (result === input) {
+            result = 'Перевод не найден. Попробуйте: привет, мир, как дела, спасибо, пока, я люблю';
+        }
+        
+        output.textContent = result;
+    }, 500);
+}
+
+// ===== 6. ДИКТОФОН =====
+function openRecorderApp() {
+    openApp('recorderApp');
+}
+
+let isRecording = false;
+let recordings = [
+    { name: 'Запись 1', duration: '0:45', date: 'Сегодня' },
+    { name: 'Запись 2', duration: '1:20', date: 'Вчера' }
+];
+
+function toggleRecording() {
+    isRecording = !isRecording;
+    const btn = document.getElementById('recordingBtn');
+    btn.innerHTML = `<i class="fas fa-${isRecording ? 'stop' : 'microphone'}"></i>`;
+    btn.className = `record-btn ${isRecording ? 'recording' : ''}`;
+    document.getElementById('recordingStatus').textContent = isRecording ? '🔴 Запись...' : 'Готово к записи';
+    
+    if (isRecording) {
+        showNotification('Диктофон', 'Запись начата');
+        setTimeout(() => {
+            if (isRecording) {
+                isRecording = false;
+                document.getElementById('recordingBtn').innerHTML = '<i class="fas fa-microphone"></i>';
+                document.getElementById('recordingBtn').className = 'record-btn';
+                document.getElementById('recordingStatus').textContent = 'Готово к записи';
+                recordings.push({ name: 'Запись ' + (recordings.length + 1), duration: '0:30', date: 'Сейчас' });
+                renderRecordings();
+                showNotification('Диктофон', 'Запись сохранена');
+            }
+        }, 3000);
+    } else {
+        showNotification('Диктофон', 'Запись остановлена');
+    }
+}
+
+function renderRecordings() {
+    const container = document.getElementById('recordingsList');
+    container.innerHTML = '';
+    recordings.forEach(rec => {
+        const div = document.createElement('div');
+        div.className = 'recording-item';
+        div.innerHTML = `
+            <i class="fas fa-file-audio"></i>
+            <div>
+                <div>${rec.name}</div>
+                <div style="font-size:12px;color:var(--text-secondary);">${rec.duration} · ${rec.date}</div>
+            </div>
+            <button onclick="playRecording('${rec.name}')"><i class="fas fa-play"></i></button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function playRecording(name) {
+    showNotification('Диктофон', `Воспроизведение: ${name}`);
+}
+
+// ===== 7. СКАНЕР =====
+function openScannerApp() {
+    openApp('scannerApp');
+}
+
+function startScan() {
+    showNotification('Сканер', 'Сканирование начато...');
+    const status = document.getElementById('scanStatus');
+    status.textContent = '🔍 Сканирование...';
+    status.style.color = '#ffc107';
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 10;
+        document.getElementById('scanProgress').style.width = progress + '%';
+        if (progress >= 100) {
+            clearInterval(interval);
+            status.textContent = '✅ Готово! Документ отсканирован';
+            status.style.color = '#4caf50';
+            showNotification('Сканер', 'Сканирование завершено');
+        }
+    }, 500);
+}
+
+// ===== 8. ЧАСЫ =====
+function openClockApp() {
+    openApp('clockApp');
+    updateClock();
+    setInterval(updateClock, 1000);
+}
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById('clockTime').textContent = now.toLocaleTimeString('ru-RU');
+    document.getElementById('clockDate').textContent = now.toLocaleDateString('ru-RU', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+
+// ===== 9. КОМПАС =====
+function openCompassApp() {
+    openApp('compassApp');
+    // Имитация работы компаса
+    let angle = 0;
+    setInterval(() => {
+        angle = (angle + 1) % 360;
+        document.getElementById('compassNeedle').style.transform = `rotate(${angle}deg)`;
+        document.getElementById('compassDegree').textContent = Math.round(angle) + '°';
+        
+        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        document.getElementById('compassDirection').textContent = dirs[Math.round(angle / 45) % 8];
+    }, 50);
+}
+
+// ===== 10. ФОНАРИК =====
+function openFlashlightApp() {
+    openApp('flashlightApp');
+}
+
+let flashlightOn = false;
+
+function toggleFlashlight() {
+    flashlightOn = !flashlightOn;
+    const light = document.getElementById('flashlightLight');
+    const btn = document.getElementById('flashlightBtn');
+    
+    if (flashlightOn) {
+        light.style.display = 'block';
+        btn.innerHTML = '<i class="fas fa-power-off"></i> Выключить';
+        btn.className = 'flashlight-btn on';
+        document.body.style.background = '#fff';
+        document.body.style.color = '#000';
+        showNotification('Фонарик', '🔦 Включен');
+    } else {
+        light.style.display = 'none';
+        btn.innerHTML = '<i class="fas fa-power-off"></i> Включить';
+        btn.className = 'flashlight-btn';
+        document.body.style.background = '';
+        document.body.style.color = '';
+        showNotification('Фонарик', 'Выключен');
+    }
+}
