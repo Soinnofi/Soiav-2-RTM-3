@@ -2,494 +2,586 @@
 # -*- coding: utf-8 -*-
 
 """
-Soiav 2 Online Store Server
-Сервер для онлайн-магазина приложений
+Soiav 2 Store Server v3.0 (Build 6032)
 Запуск: python server.py
+Установка: pip install flask flask-cors
 """
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 import json
 import os
 import uuid
+import hashlib
 from datetime import datetime
-from threading import Thread
-import time
 
 app = Flask(__name__)
 CORS(app)
 
 # ================== ДАННЫЕ ==================
 
-# База данных приложений
-APPS_DB = {
-    "apps": [
-        {
-            "id": "music_player",
-            "name": "Soiav Music Player",
-            "version": "3.2.0",
-            "category": "multimedia",
-            "price": 0,
-            "is_free": True,
-            "rating": 4.8,
-            "downloads": 15420,
-            "size": "15.4 MB",
-            "developer": "Soiav Studios",
-            "description": "Мощный аудиоплеер с эквалайзером и поддержкой всех форматов",
-            "short_desc": "Музыкальный плеер премиум-класса",
-            "icon": "fa-headphones",
-            "screenshots": [],
-            "release_date": "2026-01-15",
-            "requirements": "Soiav 2 build 5500+",
-            "languages": ["ru", "en"],
-            "features": ["Эквалайзер", "Плейлисты", "Подкасты", "Радио"]
-        },
-        {
-            "id": "video_editor",
-            "name": "Soiav Video Editor",
-            "version": "2.1.0",
-            "category": "creative",
-            "price": 499,
-            "is_free": False,
-            "rating": 4.9,
-            "downloads": 8920,
-            "size": "128 MB",
-            "developer": "Soiav Studios",
-            "description": "Профессиональный видеоредактор с поддержкой 4K",
-            "short_desc": "Редактируйте видео как профессионал",
-            "icon": "fa-video",
-            "screenshots": [],
-            "release_date": "2026-02-01",
-            "requirements": "Soiav 2 Pro build 5800+",
-            "languages": ["ru", "en", "de", "fr"],
-            "features": ["Монтаж", "Эффекты", "Переходы", "Титры"]
-        },
-        {
-            "id": "photo_editor",
-            "name": "Soiav Photo Editor",
-            "version": "4.0.0",
-            "category": "creative",
-            "price": 299,
-            "is_free": False,
-            "rating": 4.7,
-            "downloads": 21340,
-            "size": "45.2 MB",
-            "developer": "Soiav Studios",
-            "description": "Редактор фотографий с AI-функциями",
-            "short_desc": "Обработка фото на новом уровне",
-            "icon": "fa-camera",
-            "screenshots": [],
-            "release_date": "2026-02-10",
-            "requirements": "Soiav 2 build 5600+",
-            "languages": ["ru", "en"],
-            "features": ["Фильтры", "AI улучшение", "Ретушь", "Коллажи"]
-        },
-        {
-            "id": "office_suite",
-            "name": "Soiav Office",
-            "version": "2026.1",
-            "category": "productivity",
-            "price": 1299,
-            "is_free": False,
-            "rating": 4.8,
-            "downloads": 45200,
-            "size": "256 MB",
-            "developer": "Soiav Systems",
-            "description": "Полный офисный пакет для работы с документами",
-            "short_desc": "Документы, таблицы, презентации",
-            "icon": "fa-file-alt",
-            "screenshots": [],
-            "release_date": "2026-01-01",
-            "requirements": "Soiav 2 build 5200+",
-            "languages": ["ru", "en", "es", "zh", "ar"],
-            "features": ["Текстовый редактор", "Таблицы", "Презентации", "PDF"]
-        },
-        {
-            "id": "vpn_secure",
-            "name": "Soiav VPN Secure",
-            "version": "1.5.0",
-            "category": "security",
-            "price": 349,
-            "is_free": False,
-            "rating": 4.6,
-            "downloads": 18930,
-            "size": "12.3 MB",
-            "developer": "Security Labs",
-            "description": "Безопасное соединение с шифрованием",
-            "short_desc": "Ваша приватность под защитой",
-            "icon": "fa-shield-alt",
-            "screenshots": [],
-            "release_date": "2026-01-20",
-            "requirements": "Soiav 2 build 5400+",
-            "languages": ["ru", "en", "de"],
-            "features": ["Блокировка рекламы", "Анти-трекинг", "Kill Switch"]
-        },
-        {
-            "id": "disk_cleaner",
-            "name": "Soiav Cleaner Pro",
-            "version": "3.0.0",
-            "category": "utilities",
-            "price": 199,
-            "is_free": False,
-            "rating": 4.5,
-            "downloads": 67200,
-            "size": "8.7 MB",
-            "developer": "SysTools",
-            "description": "Очистка системы от мусора и оптимизация",
-            "short_desc": "Освободите место на диске",
-            "icon": "fa-broom",
-            "screenshots": [],
-            "release_date": "2026-02-05",
-            "requirements": "Soiav 2 build 5000+",
-            "languages": ["ru", "en"],
-            "features": ["Очистка кэша", "Удаление дубликатов", "Реестр"]
-        }
-    ],
-    "games": [
-        {
-            "id": "cyber_racer",
-            "name": "Cyber Racer 2077",
-            "version": "1.2.0",
-            "category": "racing",
-            "price": 799,
-            "is_free": False,
-            "rating": 4.9,
-            "downloads": 12340,
-            "size": "1.2 GB",
-            "developer": "Neon Games",
-            "description": "Киберпанк-гонки на безумных скоростях",
-            "short_desc": "Гоночный экшен в кибер-мире",
-            "icon": "fa-car",
-            "screenshots": [],
-            "release_date": "2026-01-25",
-            "requirements": "Soiav 2 Pro build 5900+",
-            "languages": ["ru", "en", "jp"],
-            "features": ["Мультиплеер", "Тюнинг", "Открытый мир"]
-        },
-        {
-            "id": "space_shooter",
-            "name": "Galaxy Shooter",
-            "version": "0.9.5",
-            "category": "action",
-            "price": 0,
-            "is_free": True,
-            "rating": 4.7,
-            "downloads": 34200,
-            "size": "245 MB",
-            "developer": "Space Labs",
-            "description": "Космический шутер с захватывающим сюжетом",
-            "short_desc": "Защитите галактику от захватчиков",
-            "icon": "fa-rocket",
-            "screenshots": [],
-            "release_date": "2026-02-14",
-            "requirements": "Soiav 2 build 5600+",
-            "languages": ["ru", "en"],
-            "features": ["3 уровня", "Боссы", "Улучшения корабля"]
-        },
-        {
-            "id": "puzzle_master",
-            "name": "Puzzle Master",
-            "version": "2.0.0",
-            "category": "puzzle",
-            "price": 149,
-            "is_free": False,
-            "rating": 4.8,
-            "downloads": 28700,
-            "size": "56 MB",
-            "developer": "Brain Games",
-            "description": "Тысячи головоломок для развития мозга",
-            "short_desc": "Тренируйте свой ум",
-            "icon": "fa-puzzle-piece",
-            "screenshots": [],
-            "release_date": "2026-01-10",
-            "requirements": "Soiav 2 build 5200+",
-            "languages": ["ru", "en", "es", "fr", "de"],
-            "features": ["500+ уровней", "Ежедневные задания", "Таблица лидеров"]
-        }
-    ],
-    "ssap": [
-        {
-            "id": "weather_widget",
-            "name": "Weather Widget SSAP",
-            "version": "1.0.0",
-            "category": "widget",
-            "price": 0,
-            "is_free": True,
-            "rating": 4.5,
-            "downloads": 890,
-            "size": "15 KB",
-            "developer": "Community",
-            "description": "Виджет погоды для рабочего стола",
-            "short_desc": "Всегда знайте погоду",
-            "icon": "fa-cloud-sun",
-            "code": "APP: WeatherWidget\nVERSION: 1.0\nTYPE: WIDGET\n\nFUNCTION main()\n  CREATE widget 300x200\n  SET location \"auto\"\n  FETCH weather data\n  DISPLAY temperature & condition\nEND",
-            "release_date": "2026-02-18"
-        }
-    ]
+APPS = [
+    {
+        "id": "chat_pro",
+        "name": "Soiav Messenger",
+        "version": "2.0.0",
+        "category": "social",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.9,
+        "downloads": 15420,
+        "size": "12.4 MB",
+        "developer": "Soiav Labs",
+        "description": "Мощный мессенджер с шифрованием, голосовыми и видеозвонками",
+        "short_desc": "Мессенджер с шифрованием",
+        "icon": "fa-comments",
+        "release_date": "2026-07-10",
+        "color": "#128C7E"
+    },
+    {
+        "id": "notes_pro",
+        "name": "Soiav Заметки",
+        "version": "3.0.0",
+        "category": "productivity",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.7,
+        "downloads": 8920,
+        "size": "4.2 MB",
+        "developer": "Soiav Systems",
+        "description": "Умные заметки с синхронизацией, тегами и напоминаниями",
+        "short_desc": "Умные заметки",
+        "icon": "fa-sticky-note",
+        "release_date": "2026-07-08",
+        "color": "#FFC107"
+    },
+    {
+        "id": "weather_pro",
+        "name": "Soiav Погода Pro",
+        "version": "2.5.0",
+        "category": "utilities",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.6,
+        "downloads": 21340,
+        "size": "8.7 MB",
+        "developer": "Soiav Weather",
+        "description": "Точный прогноз погоды с картами, радаром и уведомлениями",
+        "short_desc": "Прогноз погоды",
+        "icon": "fa-cloud-sun",
+        "release_date": "2026-07-06",
+        "color": "#2196F3"
+    },
+    {
+        "id": "task_pro",
+        "name": "Soiav Задачи",
+        "version": "1.8.0",
+        "category": "productivity",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.8,
+        "downloads": 6720,
+        "size": "3.1 MB",
+        "developer": "Soiav Labs",
+        "description": "Умный менеджер задач с доской Канбан и напоминаниями",
+        "short_desc": "Менеджер задач",
+        "icon": "fa-tasks",
+        "release_date": "2026-07-05",
+        "color": "#9C27B0"
+    },
+    {
+        "id": "translate_pro",
+        "name": "Soiav Переводчик",
+        "version": "1.2.0",
+        "category": "utilities",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.5,
+        "downloads": 3420,
+        "size": "6.8 MB",
+        "developer": "Soiav AI",
+        "description": "Переводчик на 100+ языков с голосовым вводом и офлайн-режимом",
+        "short_desc": "Переводчик с AI",
+        "icon": "fa-language",
+        "release_date": "2026-07-07",
+        "color": "#4CAF50"
+    },
+    {
+        "id": "recorder_pro",
+        "name": "Soiav Диктофон",
+        "version": "2.0.0",
+        "category": "multimedia",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.4,
+        "downloads": 5670,
+        "size": "5.3 MB",
+        "developer": "Soiav Audio",
+        "description": "Качественная запись звука с шумоподавлением и транскрипцией",
+        "short_desc": "Диктофон с шумоподавлением",
+        "icon": "fa-microphone",
+        "release_date": "2026-07-04",
+        "color": "#F44336"
+    },
+    {
+        "id": "scanner_pro",
+        "name": "Soiav Сканер",
+        "version": "1.5.0",
+        "category": "utilities",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.3,
+        "downloads": 4320,
+        "size": "7.2 MB",
+        "developer": "Soiav Scan",
+        "description": "Сканер документов с OCR, распознаванием текста и PDF-экспортом",
+        "short_desc": "Сканер документов",
+        "icon": "fa-camera",
+        "release_date": "2026-07-03",
+        "color": "#FF9800"
+    },
+    {
+        "id": "clock_pro",
+        "name": "Soiav Часы",
+        "version": "3.0.0",
+        "category": "utilities",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.7,
+        "downloads": 18930,
+        "size": "2.8 MB",
+        "developer": "Soiav Systems",
+        "description": "Красивые часы с будильником, таймером и секундомером",
+        "short_desc": "Часы с будильником",
+        "icon": "fa-clock",
+        "release_date": "2026-07-02",
+        "color": "#607D8B"
+    },
+    {
+        "id": "compass_pro",
+        "name": "Soiav Компас",
+        "version": "1.0.0",
+        "category": "utilities",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.2,
+        "downloads": 2340,
+        "size": "1.5 MB",
+        "developer": "Soiav Tools",
+        "description": "Точный компас с GPS-координатами и высотой над уровнем моря",
+        "short_desc": "Компас с GPS",
+        "icon": "fa-compass",
+        "release_date": "2026-07-09",
+        "color": "#795548"
+    },
+    {
+        "id": "flashlight_pro",
+        "name": "Soiav Фонарик",
+        "version": "2.0.0",
+        "category": "utilities",
+        "price": 0,
+        "is_free": True,
+        "rating": 4.6,
+        "downloads": 32100,
+        "size": "1.2 MB",
+        "developer": "Soiav Tools",
+        "description": "Яркий фонарик с режимами мигания и SOS",
+        "short_desc": "Фонарик с SOS",
+        "icon": "fa-lightbulb",
+        "release_date": "2026-07-01",
+        "color": "#FFD600"
+    }
+]
+
+USERS = {
+    "test": {
+        "id": "test",
+        "name": "Тестовый Пользователь",
+        "email": "test@soiav.com",
+        "password": hashlib.sha256("123456".encode()).hexdigest(),
+        "purchases": []
+    }
 }
 
-# Пользователи и покупки
-users = {}
-purchases = {}
+PURCHASES = {}
+DOWNLOADS = {}
+REVIEWS = {}
 
-# Статистика загрузок
-download_stats = {}
-
-# ================== API ЭНДПОИНТЫ ==================
+# ================== API ==================
 
 @app.route('/api/store/apps', methods=['GET'])
 def get_apps():
-    """Получить все приложения"""
     category = request.args.get('category', 'all')
     search = request.args.get('search', '')
-    page = int(request.args.get('page', 1))
-    per_page = int(request.args.get('per_page', 20))
     
-    all_items = []
-    for cat in ['apps', 'games', 'ssap']:
-        for item in APPS_DB.get(cat, []):
-            item['type'] = cat
-            all_items.append(item)
+    result = APPS.copy()
     
     if category != 'all':
-        if category == 'apps':
-            all_items = APPS_DB['apps'] + APPS_DB['ssap']
-            for item in all_items:
-                item['type'] = 'apps' if item in APPS_DB['apps'] else 'ssap'
-        elif category == 'games':
-            all_items = APPS_DB['games']
-            for item in all_items:
-                item['type'] = 'games'
-        else:
-            all_items = [item for item in all_items if item.get('category') == category]
+        result = [app for app in result if app.get('category') == category]
     
     if search:
-        search_lower = search.lower()
-        all_items = [item for item in all_items if 
-                    search_lower in item['name'].lower() or 
-                    search_lower in item.get('short_desc', '').lower()]
-    
-    total = len(all_items)
-    start = (page - 1) * per_page
-    end = start + per_page
+        s = search.lower()
+        result = [app for app in result if s in app['name'].lower() or s in app.get('short_desc', '').lower()]
     
     return jsonify({
         'success': True,
-        'items': all_items[start:end],
-        'total': total,
-        'page': page,
-        'per_page': per_page,
-        'total_pages': (total + per_page - 1) // per_page
+        'items': result,
+        'total': len(result)
     })
 
 @app.route('/api/store/app/<app_id>', methods=['GET'])
 def get_app(app_id):
-    """Получить информацию о приложении"""
-    for cat in ['apps', 'games', 'ssap']:
-        for item in APPS_DB.get(cat, []):
-            if item['id'] == app_id:
-                item['type'] = cat
-                return jsonify({'success': True, 'app': item})
+    for app in APPS:
+        if app['id'] == app_id:
+            return jsonify({
+                'success': True,
+                'app': app,
+                'reviews': REVIEWS.get(app_id, [])
+            })
     return jsonify({'success': False, 'error': 'App not found'}), 404
 
 @app.route('/api/store/download', methods=['POST'])
 def download_app():
-    """Скачать приложение"""
     data = request.json
     app_id = data.get('app_id')
     user_id = data.get('user_id', 'anonymous')
     
-    # Поиск приложения
-    app = None
-    for cat in ['apps', 'games', 'ssap']:
-        for item in APPS_DB.get(cat, []):
-            if item['id'] == app_id:
-                app = item
-                break
-        if app:
-            break
+    for app in APPS:
+        if app['id'] == app_id:
+            app['downloads'] = app.get('downloads', 0) + 1
+            
+            if app_id not in DOWNLOADS:
+                DOWNLOADS[app_id] = []
+            DOWNLOADS[app_id].append({
+                'user': user_id,
+                'timestamp': datetime.now().isoformat()
+            })
+            
+            return jsonify({
+                'success': True,
+                'message': f'Download started for {app["name"]}',
+                'size': app.get('size', 'N/A'),
+                'version': app.get('version', '1.0')
+            })
     
-    if not app:
-        return jsonify({'success': False, 'error': 'App not found'}), 404
-    
-    # Увеличиваем счетчик загрузок
-    app['downloads'] = app.get('downloads', 0) + 1
-    
-    # Логируем загрузку
-    if app_id not in download_stats:
-        download_stats[app_id] = []
-    download_stats[app_id].append({
-        'user': user_id,
-        'timestamp': datetime.now().isoformat(),
-        'version': app.get('version')
-    })
-    
-    # Сохраняем покупку если платное
-    if not app.get('is_free', True) and user_id != 'anonymous':
-        if user_id not in purchases:
-            purchases[user_id] = []
-        if app_id not in purchases[user_id]:
-            purchases[user_id].append(app_id)
-    
-    return jsonify({
-        'success': True,
-        'message': f'Download started for {app["name"]}',
-        'download_url': f'/api/store/downloads/{app_id}.app',
-        'size': app['size']
-    })
-
-@app.route('/api/store/featured', methods=['GET'])
-def get_featured():
-    """Получить рекомендуемые приложения"""
-    featured = []
-    
-    # Топ по загрузкам
-    sorted_by_downloads = []
-    for cat in ['apps', 'games', 'ssap']:
-        for item in APPS_DB.get(cat, []):
-            sorted_by_downloads.append((item.get('downloads', 0), item))
-    
-    sorted_by_downloads.sort(reverse=True, key=lambda x: x[0])
-    featured = [item for _, item in sorted_by_downloads[:6]]
-    
-    return jsonify({'success': True, 'featured': featured})
-
-@app.route('/api/store/categories', methods=['GET'])
-def get_categories():
-    """Получить категории"""
-    categories = {
-        'all': 'Все',
-        'apps': 'Приложения',
-        'games': 'Игры',
-        'multimedia': 'Мультимедиа',
-        'creative': 'Творчество',
-        'productivity': 'Продуктивность',
-        'security': 'Безопасность',
-        'utilities': 'Утилиты',
-        'racing': 'Гонки',
-        'action': 'Экшн',
-        'puzzle': 'Головоломки',
-        'widget': 'Виджеты'
-    }
-    return jsonify({'success': True, 'categories': categories})
+    return jsonify({'success': False, 'error': 'App not found'}), 404
 
 @app.route('/api/store/stats', methods=['GET'])
 def get_stats():
-    """Получить статистику магазина"""
-    total_apps = sum(len(APPS_DB.get(cat, [])) for cat in ['apps', 'games', 'ssap'])
-    total_downloads = sum(item.get('downloads', 0) for cat in ['apps', 'games', 'ssap'] for item in APPS_DB.get(cat, []))
+    total = len(APPS)
+    downloads = sum(app.get('downloads', 0) for app in APPS)
+    free = len([app for app in APPS if app.get('is_free', True)])
+    paid = len([app for app in APPS if not app.get('is_free', True)])
+    
+    top = sorted(APPS, key=lambda x: x.get('downloads', 0), reverse=True)[:5]
     
     return jsonify({
         'success': True,
         'stats': {
-            'total_apps': total_apps,
-            'total_downloads': total_downloads,
-            'free_apps': len([item for cat in ['apps', 'games', 'ssap'] for item in APPS_DB.get(cat, []) if item.get('is_free', True)]),
-            'paid_apps': len([item for cat in ['apps', 'games', 'ssap'] for item in APPS_DB.get(cat, []) if not item.get('is_free', True)])
+            'total_apps': total,
+            'total_downloads': downloads,
+            'free_apps': free,
+            'paid_apps': paid
+        },
+        'top_apps': top
+    })
+
+@app.route('/api/store/categories', methods=['GET'])
+def get_categories():
+    cats = {}
+    for app in APPS:
+        cat = app.get('category', 'other')
+        cats[cat] = cats.get(cat, 0) + 1
+    
+    names = {
+        'all': 'Все',
+        'social': 'Соцсети',
+        'productivity': 'Продуктивность',
+        'utilities': 'Утилиты',
+        'multimedia': 'Мультимедиа'
+    }
+    
+    return jsonify({
+        'success': True,
+        'categories': cats,
+        'names': names
+    })
+
+@app.route('/api/store/featured', methods=['GET'])
+def get_featured():
+    featured = sorted(APPS, key=lambda x: (x.get('rating', 0), x.get('downloads', 0)), reverse=True)[:6]
+    return jsonify({'success': True, 'featured': featured})
+
+@app.route('/api/store/review', methods=['POST'])
+def add_review():
+    data = request.json
+    app_id = data.get('app_id')
+    user_id = data.get('user_id')
+    rating = data.get('rating')
+    text = data.get('text', '')
+    
+    if app_id not in REVIEWS:
+        REVIEWS[app_id] = []
+    
+    REVIEWS[app_id].append({
+        'user': user_id,
+        'rating': rating,
+        'text': text,
+        'date': datetime.now().isoformat()
+    })
+    
+    # Обновляем рейтинг
+    for app in APPS:
+        if app['id'] == app_id:
+            total = sum(r['rating'] for r in REVIEWS[app_id])
+            app['rating'] = round(total / len(REVIEWS[app_id]), 1)
+            break
+    
+    return jsonify({'success': True, 'message': 'Review added'})
+
+@app.route('/api/store/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not email or not password:
+        return jsonify({'success': False, 'error': 'Email и пароль обязательны'}), 400
+    
+    pwd_hash = hashlib.sha256(password.encode()).hexdigest()
+    
+    for user_id, user in USERS.items():
+        if user.get('email') == email and user.get('password') == pwd_hash:
+            return jsonify({
+                'success': True,
+                'user': {
+                    'id': user_id,
+                    'name': user.get('name'),
+                    'email': user.get('email')
+                }
+            })
+    
+    return jsonify({'success': False, 'error': 'Неверный email или пароль'}), 401
+
+@app.route('/api/store/register', methods=['POST'])
+def register():
+    data = request.json
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not name or not email or not password:
+        return jsonify({'success': False, 'error': 'Все поля обязательны'}), 400
+    
+    for user in USERS.values():
+        if user.get('email') == email:
+            return jsonify({'success': False, 'error': 'Email уже используется'}), 400
+    
+    user_id = str(uuid.uuid4())[:8]
+    USERS[user_id] = {
+        'id': user_id,
+        'name': name,
+        'email': email,
+        'password': hashlib.sha256(password.encode()).hexdigest(),
+        'purchases': []
+    }
+    
+    return jsonify({
+        'success': True,
+        'user': {
+            'id': user_id,
+            'name': name,
+            'email': email
         }
     })
 
 @app.route('/api/store/purchased', methods=['POST'])
 def get_purchased():
-    """Получить купленные приложения пользователя"""
     data = request.json
     user_id = data.get('user_id')
     
-    if not user_id or user_id not in purchases:
-        return jsonify({'success': True, 'purchased': []})
+    if user_id not in USERS:
+        return jsonify({'success': False, 'error': 'User not found'}), 404
     
-    purchased_ids = purchases[user_id]
-    purchased_apps = []
+    purchased = []
+    for app_id in PURCHASES.get(user_id, []):
+        for app in APPS:
+            if app['id'] == app_id:
+                purchased.append(app)
+                break
     
-    for cat in ['apps', 'games', 'ssap']:
-        for item in APPS_DB.get(cat, []):
-            if item['id'] in purchased_ids:
-                purchased_apps.append(item)
-    
-    return jsonify({'success': True, 'purchased': purchased_apps})
+    return jsonify({'success': True, 'purchased': purchased})
 
-# ================== ВЕБ-ИНТЕРФЕЙС ДЛЯ АДМИНА ==================
+@app.route('/api/store/purchase', methods=['POST'])
+def purchase():
+    data = request.json
+    user_id = data.get('user_id')
+    app_id = data.get('app_id')
+    
+    if user_id not in USERS:
+        return jsonify({'success': False, 'error': 'User not found'}), 404
+    
+    if user_id not in PURCHASES:
+        PURCHASES[user_id] = []
+    
+    if app_id not in PURCHASES[user_id]:
+        PURCHASES[user_id].append(app_id)
+    
+    return jsonify({'success': True, 'message': 'App purchased'})
 
 @app.route('/admin', methods=['GET'])
-def admin_panel():
-    """Админ-панель"""
+def admin():
     return '''
     <!DOCTYPE html>
     <html>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Soiav Store Admin</title>
         <style>
-            body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: #fff; }
+            * { margin:0; padding:0; box-sizing:border-box; }
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background: #0d0d0d;
+                color: #fff;
+                padding: 30px;
+            }
             .container { max-width: 1200px; margin: 0 auto; }
-            .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-            .stat-card { background: #2d2d2d; padding: 20px; border-radius: 12px; text-align: center; }
-            .stat-number { font-size: 32px; font-weight: bold; color: #0078d7; }
-            .app-list { background: #2d2d2d; border-radius: 12px; padding: 20px; }
-            .app-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #444; }
-            .app-name { font-weight: bold; }
+            h1 { color: #0078d7; font-weight: 300; margin-bottom: 5px; }
+            .sub { color: #666; margin-bottom: 30px; }
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+                margin: 30px 0;
+            }
+            .stat {
+                background: #1a1a1a;
+                padding: 25px;
+                border-radius: 16px;
+                text-align: center;
+                border: 1px solid #2a2a2a;
+            }
+            .stat-num { font-size: 36px; font-weight: bold; color: #0078d7; }
+            .stat-label { color: #888; margin-top: 5px; }
+            .panel {
+                background: #1a1a1a;
+                border-radius: 16px;
+                padding: 25px;
+                margin-top: 30px;
+                border: 1px solid #2a2a2a;
+            }
+            .panel h2 { color: #0078d7; font-weight: 300; margin-bottom: 20px; }
+            .app-item {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                padding: 12px 16px;
+                border-bottom: 1px solid #2a2a2a;
+            }
+            .app-item:hover { background: #2a2a2a; }
+            .app-name { font-weight: 600; }
             .app-downloads { color: #4caf50; }
-            h1 { color: #0078d7; }
+            .app-rating { color: #ffc107; }
+            .app-price { color: #888; }
+            .top-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 15px;
+            }
+            .top-item {
+                background: #2a2a2a;
+                padding: 15px;
+                border-radius: 12px;
+                text-align: center;
+            }
+            .top-item .name { font-weight: 600; }
+            .top-item .down { color: #4caf50; font-size: 14px; }
+            .refresh {
+                background: #0078d7;
+                border: none;
+                color: white;
+                padding: 10px 24px;
+                border-radius: 12px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: 0.3s;
+                margin-bottom: 20px;
+            }
+            .refresh:hover { background: #106ebe; transform: scale(1.02); }
+            @media (max-width: 768px) {
+                .stats { grid-template-columns: repeat(2, 1fr); }
+                .app-item { grid-template-columns: 1fr; gap: 5px; }
+            }
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>Soiav Store Admin Panel</h1>
+            <h1>🚀 Soiav Store Admin</h1>
+            <div class="sub">Build 6032 · Сервер на порту 5000</div>
+            
+            <button class="refresh" onclick="location.reload()">⟳ Обновить</button>
+            
             <div class="stats" id="stats"></div>
-            <div class="app-list">
-                <h2>Приложения</h2>
-                <div id="appsList"></div>
+            
+            <div class="panel">
+                <h2>🏆 Топ приложений</h2>
+                <div class="top-grid" id="top"></div>
+            </div>
+            
+            <div class="panel">
+                <h2>📦 Все приложения</h2>
+                <div id="apps"></div>
             </div>
         </div>
+        
         <script>
             fetch('/api/store/stats')
                 .then(r => r.json())
                 .then(data => {
-                    const stats = data.stats;
+                    const s = data.stats;
                     document.getElementById('stats').innerHTML = `
-                        <div class="stat-card"><div class="stat-number">${stats.total_apps}</div><div>Приложений</div></div>
-                        <div class="stat-card"><div class="stat-number">${stats.total_downloads.toLocaleString()}</div><div>Загрузок</div></div>
-                        <div class="stat-card"><div class="stat-number">${stats.free_apps}</div><div>Бесплатных</div></div>
-                        <div class="stat-card"><div class="stat-number">${stats.paid_apps}</div><div>Платных</div></div>
+                        <div class="stat"><div class="stat-num">${s.total_apps}</div><div class="stat-label">📱 Приложений</div></div>
+                        <div class="stat"><div class="stat-num">${s.total_downloads.toLocaleString()}</div><div class="stat-label">⬇️ Загрузок</div></div>
+                        <div class="stat"><div class="stat-num">${s.free_apps}</div><div class="stat-label">🆓 Бесплатных</div></div>
+                        <div class="stat"><div class="stat-num">${s.paid_apps}</div><div class="stat-label">💰 Платных</div></div>
                     `;
+                    
+                    const top = data.top_apps || [];
+                    document.getElementById('top').innerHTML = top.map(a => `
+                        <div class="top-item">
+                            <div class="name">${a.name}</div>
+                            <div class="down">⬇️ ${(a.downloads || 0).toLocaleString()}</div>
+                            <div style="color:#ffc107;">⭐ ${a.rating || 0}</div>
+                        </div>
+                    `).join('');
                 });
             
-            fetch('/api/store/apps?per_page=50')
+            fetch('/api/store/apps')
                 .then(r => r.json())
                 .then(data => {
-                    let html = '';
-                    data.items.forEach(app => {
-                        html += `
-                            <div class="app-item">
-                                <span class="app-name">${app.name}</span>
-                                <span class="app-downloads">📥 ${app.downloads || 0}</span>
-                                <span>⭐ ${app.rating || 0}</span>
-                                <span>${app.is_free ? '🆓 Бесплатно' : '💰 ' + app.price + ' ₽'}</span>
-                            </div>
-                        `;
-                    });
-                    document.getElementById('appsList').innerHTML = html;
+                    document.getElementById('apps').innerHTML = data.items.map(a => `
+                        <div class="app-item">
+                            <span class="app-name">${a.name}</span>
+                            <span class="app-downloads">⬇️ ${(a.downloads || 0).toLocaleString()}</span>
+                            <span class="app-rating">⭐ ${a.rating || 0}</span>
+                            <span class="app-price">${a.is_free ? '🆓' : '💰 ' + a.price + ' ₽'}</span>
+                        </div>
+                    `).join('');
                 });
         </script>
     </body>
     </html>
     '''
 
-# ================== ЗАПУСК СЕРВЕРА ==================
-
 if __name__ == '__main__':
     print("=" * 50)
-    print("Soiav 2 Online Store Server")
-    print("Версия: 2.0.0")
+    print("🔥 Soiav Store Server v3.0")
+    print("📦 Build 6032")
     print("=" * 50)
-    print("\nСервер запущен на http://localhost:5000")
-    print("API эндпоинты:")
-    print("  GET  /api/store/apps     - Получить приложения")
-    print("  GET  /api/store/app/<id> - Информация о приложении")
-    print("  POST /api/store/download - Скачать приложение")
-    print("  GET  /api/store/featured - Рекомендуемые")
-    print("  GET  /api/store/stats    - Статистика")
-    print("  GET  /admin              - Админ-панель")
-    print("\nНажмите Ctrl+C для остановки")
+    print("\n✅ Сервер запущен: http://localhost:5000")
+    print("📱 Админ-панель: http://localhost:5000/admin")
+    print("🆕 Новые приложения: Messenger, Заметки, Погода, Задачи, Переводчик, Диктофон, Сканер, Часы, Компас, Фонарик")
+    print("\nНажми Ctrl+C для остановки")
     print("=" * 50)
     
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
