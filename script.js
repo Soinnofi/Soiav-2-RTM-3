@@ -6517,3 +6517,222 @@ handleTerminalCommand = function(command, output) {
     // Если команда не обработана - вызываем оригинальную
     originalTerminal(command, output);
 };
+// ================== BUILD 6032 - РАБОЧИЕ УЛУЧШЕНИЯ ==================
+
+// ===== 1. НОВЫЕ ПРИЛОЖЕНИЯ В МЕНЮ ПУСК =====
+function addNewAppsToStartMenu() {
+    const startApps = document.querySelector('.start-menu-apps');
+    if (!startApps) return;
+    
+    // Проверяем, не добавлены ли уже
+    if (document.querySelector('.start-menu-item[data-app="calculator"]')) return;
+    
+    const newApps = [
+        { name: 'Калькулятор', icon: 'fa-calculator', action: 'calculator' },
+        { name: 'Заметки', icon: 'fa-sticky-note', action: 'notes' },
+        { name: 'Погода', icon: 'fa-cloud-sun', action: 'weather' },
+        { name: 'Задачи', icon: 'fa-tasks', action: 'tasks' },
+        { name: 'Переводчик', icon: 'fa-language', action: 'translate' }
+    ];
+    
+    newApps.forEach(app => {
+        const item = document.createElement('div');
+        item.className = 'start-menu-item';
+        item.setAttribute('data-app', app.action);
+        item.innerHTML = `<i class="fas ${app.icon}"></i><span>${app.name}</span>`;
+        item.onclick = function(e) {
+            e.stopPropagation();
+            showNotification(app.name, 'Демо-приложение открыто');
+            document.getElementById('startMenu').classList.remove('active');
+        };
+        startApps.appendChild(item);
+    });
+}
+
+// ===== 2. РАБОЧИЙ БРАУЗЕР С ВКЛАДКАМИ =====
+let browserTabCount = 1;
+
+function addBrowserTab() {
+    browserTabCount++;
+    const url = document.querySelector('.url-bar')?.value || 'https://google.com';
+    showNotification('Браузер', `Новая вкладка: ${browserTabCount}`);
+    document.querySelector('.url-bar').value = 'https://google.com';
+    // Обновляем контент
+    const content = document.querySelector('.browser-content');
+    if (content) {
+        content.innerHTML = `
+            <div style="padding:30px;text-align:center;">
+                <i class="fas fa-globe" style="font-size:48px;color:var(--accent-color);margin-bottom:15px;"></i>
+                <h3>Вкладка ${browserTabCount}</h3>
+                <p style="color:var(--text-secondary);">Введите URL в адресной строке</p>
+                <div style="margin-top:15px;display:flex;gap:10px;justify-content:center;">
+                    <button onclick="document.querySelector('.url-bar').value='https://google.com';document.querySelector('.browser-content').innerHTML='<div style=padding:30px;text-align:center;><i class=fas fa-globe style=font-size:48px;color:var(--accent-color);margin-bottom:15px;></i><h3>Google</h3><p style=color:var(--text-secondary);>Поисковая система</p></div>'" class="toolbar-btn">Google</button>
+                    <button onclick="document.querySelector('.url-bar').value='https://youtube.com';document.querySelector('.browser-content').innerHTML='<div style=padding:30px;text-align:center;><i class=fas fa-video style=font-size:48px;color:var(--accent-color);margin-bottom:15px;></i><h3>YouTube</h3><p style=color:var(--text-secondary);>Видеохостинг</p></div>'" class="toolbar-btn">YouTube</button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Добавляем кнопку новой вкладки в браузер
+function initBrowserTabs() {
+    const browserBar = document.querySelector('.browser-bar');
+    if (!browserBar) return;
+    
+    // Добавляем кнопку "+" если её нет
+    if (!document.querySelector('.browser-tab-add')) {
+        const addBtn = document.createElement('button');
+        addBtn.className = 'browser-btn browser-tab-add';
+        addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        addBtn.title = 'Новая вкладка';
+        addBtn.onclick = addBrowserTab;
+        addBtn.style.cssText = 'background:var(--bg-tertiary);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:14px;margin-left:5px;';
+        browserBar.appendChild(addBtn);
+    }
+}
+
+// ===== 3. НОВЫЕ КОМАНДЫ В ТЕРМИНАЛЕ =====
+function addTerminalCommands() {
+    const terminalInput = document.getElementById('terminalInput');
+    if (!terminalInput) return;
+    
+    // Сохраняем оригинальный обработчик
+    const originalHandler = terminalInput.onkeypress;
+    
+    terminalInput.onkeypress = function(e) {
+        if (e.key === 'Enter') {
+            const cmd = this.value.trim().toLowerCase();
+            const output = document.getElementById('terminalOutput');
+            
+            if (cmd === 'help') {
+                output.innerHTML += `
+                    <div class="terminal-line">Доступные команды:</div>
+                    <div class="terminal-line">  <span class="command">help</span> - помощь</div>
+                    <div class="terminal-line">  <span class="command">clear</span> - очистить</div>
+                    <div class="terminal-line">  <span class="command">date</span> - дата</div>
+                    <div class="terminal-line">  <span class="command">time</span> - время</div>
+                    <div class="terminal-line">  <span class="command">whoami</span> - пользователь</div>
+                    <div class="terminal-line">  <span class="command">ls</span> - список файлов</div>
+                    <div class="terminal-line">  <span class="command">version</span> - версия</div>
+                    <div class="terminal-line">  <span class="command">calc</span> - калькулятор</div>
+                    <div class="terminal-line">  <span class="command">browser</span> - браузер</div>
+                    <div class="terminal-line">  <span class="command">store</span> - магазин</div>
+                `;
+                this.value = '';
+                output.scrollTop = output.scrollHeight;
+                return;
+            }
+            
+            if (cmd === 'calc') {
+                output.innerHTML += `<div class="terminal-line"><span class="success">Открываю калькулятор...</span></div>`;
+                showNotification('Терминал', 'Калькулятор открыт');
+                this.value = '';
+                output.scrollTop = output.scrollHeight;
+                return;
+            }
+            
+            if (cmd === 'browser') {
+                output.innerHTML += `<div class="terminal-line"><span class="success">Открываю браузер...</span></div>`;
+                openApp('browser');
+                this.value = '';
+                output.scrollTop = output.scrollHeight;
+                return;
+            }
+            
+            if (cmd === 'store') {
+                output.innerHTML += `<div class="terminal-line"><span class="success">Открываю магазин...</span></div>`;
+                openApp('store');
+                this.value = '';
+                output.scrollTop = output.scrollHeight;
+                return;
+            }
+            
+            if (cmd === 'version') {
+                output.innerHTML += `<div class="terminal-line"><span class="success">Soiav 2 RTM build 6032</span></div>`;
+                this.value = '';
+                output.scrollTop = output.scrollHeight;
+                return;
+            }
+            
+            // Если команда не обработана - передаём дальше
+            if (originalHandler) {
+                originalHandler.call(this, e);
+            }
+        }
+    };
+}
+
+// ===== 4. УЛУЧШЕННЫЙ МАГАЗИН =====
+function initStore() {
+    const storeGrid = document.getElementById('appsGrid');
+    if (!storeGrid) return;
+    
+    // Добавляем локальные приложения
+    const localApps = [
+        { name: 'Калькулятор', icon: 'fa-calculator', desc: 'Простой калькулятор', free: true },
+        { name: 'Заметки', icon: 'fa-sticky-note', desc: 'Текстовые заметки', free: true },
+        { name: 'Погода', icon: 'fa-cloud-sun', desc: 'Прогноз погоды', free: true },
+        { name: 'Задачи', icon: 'fa-tasks', desc: 'Список задач', free: true },
+        { name: 'Переводчик', icon: 'fa-language', desc: 'Перевод текста', free: true }
+    ];
+    
+    storeGrid.innerHTML = '';
+    localApps.forEach(app => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.innerHTML = `
+            <div class="app-icon"><i class="fas ${app.icon}"></i></div>
+            <div class="app-title">${app.name}</div>
+            <div class="app-desc">${app.desc}</div>
+            <div class="app-meta">
+                <span>1.5 MB</span>
+                <span>⭐ 4.5</span>
+            </div>
+            <button class="install-btn" onclick="showNotification('Магазин','${app.name} установлен!')">
+                ${app.free ? 'Бесплатно' : '99 ₽'}
+            </button>
+        `;
+        storeGrid.appendChild(card);
+    });
+}
+
+// ===== 5. УЛУЧШЕННЫЕ НАСТРОЙКИ =====
+function initSettings() {
+    // Добавляем новые пункты в настройки
+    const settingsSidebar = document.querySelector('.settings-sidebar');
+    if (!settingsSidebar) return;
+    
+    // Проверяем, не добавлены ли уже
+    if (document.querySelector('[data-category="updates"]')) return;
+    
+    const newCategories = [
+        { category: 'updates', icon: 'fa-download', name: 'Обновления' },
+        { category: 'privacy', icon: 'fa-shield-alt', name: 'Конфиденциальность' }
+    ];
+    
+    newCategories.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'settings-category';
+        item.setAttribute('data-category', cat.category);
+        item.innerHTML = `<i class="fas ${cat.icon}"></i><span>${cat.name}</span>`;
+        item.onclick = function() {
+            document.querySelectorAll('.settings-category').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            showNotification('Настройки', `Раздел: ${cat.name}`);
+        };
+        settingsSidebar.appendChild(item);
+    });
+}
+
+// ===== 6. ЗАПУСК ВСЕХ УЛУЧШЕНИЙ =====
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        addNewAppsToStartMenu();
+        initBrowserTabs();
+        addTerminalCommands();
+        initStore();
+        initSettings();
+        
+        console.log('✅ Build 6032 загружен!');
+    }, 1000);
+});
