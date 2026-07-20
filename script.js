@@ -6099,3 +6099,421 @@ function toggleFlashlight() {
         showNotification('Фонарик', 'Выключен');
     }
 }
+// ================== BUILD 6032 - УЛУЧШЕНИЯ СУЩЕСТВУЮЩИХ ПРИЛОЖЕНИЙ ==================
+
+// ===== 1. ПРОВОДНИК - ДОБАВЛЯЕМ ОБЛАЧНЫЕ ДИСКИ =====
+const originalOpenFolder = openFolder;
+openFolder = function(folderName) {
+    if (folderName === 'cloud') {
+        document.getElementById('addressBar').textContent = 'Этот компьютер > SID Cloud';
+        document.getElementById('fileGrid').innerHTML = `
+            <div class="file-item" onclick="openCloudFile('document')">
+                <i class="fas fa-file-alt"></i>
+                <span>Документ SID.txt</span>
+            </div>
+            <div class="file-item" onclick="openCloudFile('photo')">
+                <i class="fas fa-image"></i>
+                <span>Фото SID.jpg</span>
+            </div>
+            <div class="file-item" onclick="openCloudFile('ssap')">
+                <i class="fas fa-code"></i>
+                <span>app.ssap</span>
+            </div>
+            <div class="file-item" onclick="openCloudFile('music')">
+                <i class="fas fa-music"></i>
+                <span>трек SID.mp3</span>
+            </div>
+        `;
+        showNotification('Проводник', 'SID Cloud подключен');
+        return;
+    }
+    originalOpenFolder(folderName);
+};
+
+function openCloudFile(type) {
+    const names = {
+        'document': 'Документ',
+        'photo': 'Фото',
+        'ssap': 'SSAP файл',
+        'music': 'Музыка'
+    };
+    showNotification('SID Cloud', `Открыт: ${names[type] || type}`);
+    if (type === 'ssap') {
+        openApp('ssapCompiler');
+    }
+}
+
+// ===== 2. БРАУЗЕР - ВКЛАДКИ И НАВИГАЦИЯ =====
+let browserTabs = [{ url: 'https://google.com', title: 'Google' }];
+let browserHistory = ['https://google.com'];
+let browserHistoryIndex = 0;
+
+function addBrowserTab() {
+    const tabsContainer = document.querySelector('.browser-tabs-container');
+    if (!tabsContainer) {
+        // Создаем контейнер если его нет
+        const toolbar = document.querySelector('.browser-bar');
+        if (toolbar) {
+            const container = document.createElement('div');
+            container.className = 'browser-tabs-container';
+            container.style.cssText = 'display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap;';
+            toolbar.parentNode.insertBefore(container, toolbar);
+        }
+    }
+    
+    const container = document.querySelector('.browser-tabs-container') || document.querySelector('.browser-bar');
+    const tab = document.createElement('div');
+    tab.className = 'browser-tab';
+    tab.style.cssText = 'padding:6px 12px;background:var(--bg-tertiary);border-radius:8px 8px 0 0;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12px;';
+    const index = browserTabs.length;
+    tab.innerHTML = `<span>Новая вкладка</span><span onclick="event.stopPropagation();closeBrowserTab(${index})" style="cursor:pointer;padding:0 4px;">×</span>`;
+    tab.onclick = () => activateBrowserTab(index);
+    container.appendChild(tab);
+    browserTabs.push({ url: 'https://google.com', title: 'Новая вкладка' });
+    activateBrowserTab(index);
+}
+
+function closeBrowserTab(index) {
+    if (browserTabs.length === 1) return;
+    browserTabs.splice(index, 1);
+    const tabs = document.querySelectorAll('.browser-tab');
+    if (tabs[index]) tabs[index].remove();
+    activateBrowserTab(0);
+}
+
+function activateBrowserTab(index) {
+    document.querySelectorAll('.browser-tab').forEach(t => t.style.background = 'var(--bg-tertiary)');
+    const tabs = document.querySelectorAll('.browser-tab');
+    if (tabs[index]) {
+        tabs[index].style.background = 'var(--accent-color)';
+        tabs[index].style.color = 'white';
+    }
+    if (browserTabs[index]) {
+        const url = browserTabs[index].url;
+        document.querySelector('.url-bar').value = url;
+        // Имитация загрузки страницы
+        const content = document.querySelector('.browser-content');
+        if (content) {
+            content.innerHTML = `
+                <div style="padding:20px;text-align:center;">
+                    <i class="fas fa-globe" style="font-size:48px;color:var(--accent-color);margin-bottom:20px;"></i>
+                    <h3>${browserTabs[index].title}</h3>
+                    <p style="color:var(--text-secondary);">Страница загружена: ${url}</p>
+                    <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">
+                        <button onclick="window.open('${url}','_blank')" class="toolbar-btn">Открыть в новой вкладке</button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+// Переопределяем функцию браузера
+const originalBrowserOpen = openApp;
+openApp = function(appId) {
+    originalBrowserOpen(appId);
+    if (appId === 'browser') {
+        setTimeout(() => {
+            // Добавляем кнопку новой вкладки
+            const toolbar = document.querySelector('.browser-bar');
+            if (toolbar && !document.querySelector('.browser-tabs-container')) {
+                const container = document.createElement('div');
+                container.className = 'browser-tabs-container';
+                container.style.cssText = 'display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap;align-items:center;';
+                container.innerHTML = `
+                    <div class="browser-tab" style="padding:6px 12px;background:var(--accent-color);color:white;border-radius:8px 8px 0 0;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12px;">
+                        <span>Google</span>
+                    </div>
+                    <button onclick="addBrowserTab()" style="background:var(--bg-tertiary);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:14px;">+</button>
+                `;
+                toolbar.parentNode.insertBefore(container, toolbar);
+                
+                // Добавляем кнопку "Домой"
+                const controls = document.querySelector('.browser-controls');
+                if (controls) {
+                    const homeBtn = document.createElement('button');
+                    homeBtn.className = 'browser-btn';
+                    homeBtn.innerHTML = '<i class="fas fa-home"></i>';
+                    homeBtn.onclick = () => {
+                        document.querySelector('.url-bar').value = 'https://google.com';
+                        document.querySelector('.browser-content').innerHTML = `
+                            <div style="padding:20px;text-align:center;">
+                                <i class="fas fa-globe" style="font-size:48px;color:var(--accent-color);margin-bottom:20px;"></i>
+                                <h3>Google</h3>
+                                <p style="color:var(--text-secondary);">Поисковая система</p>
+                            </div>
+                        `;
+                    };
+                    controls.appendChild(homeBtn);
+                }
+            }
+        }, 100);
+    }
+};
+
+// ===== 3. МАГАЗИН - ПОДКЛЮЧЕНИЕ К СЕРВЕРУ =====
+let storeConnected = false;
+
+async function checkStoreConnection() {
+    try {
+        const response = await fetch('http://localhost:5000/api/store/stats');
+        if (response.ok) {
+            storeConnected = true;
+            console.log('✅ Магазин подключен к серверу');
+            return true;
+        }
+    } catch(e) {
+        console.log('❌ Сервер магазина не запущен');
+    }
+    storeConnected = false;
+    return false;
+}
+
+async function loadStoreApps(category = 'all', search = '') {
+    const grid = document.getElementById('appsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '<div style="text-align:center;padding:30px;"><div class="loading-spinner"></div><p>Загрузка приложений...</p></div>';
+    
+    let apps = [];
+    
+    if (storeConnected) {
+        try {
+            const url = `http://localhost:5000/api/store/apps?category=${category}&search=${encodeURIComponent(search)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            apps = data.items || [];
+        } catch(e) {
+            apps = getLocalApps();
+        }
+    } else {
+        apps = getLocalApps();
+    }
+    
+    renderStoreApps(apps);
+}
+
+function getLocalApps() {
+    return [
+        { id: "calc", name: "Калькулятор", price: 0, is_free: true, rating: 4.5, downloads: 1234, size: "2 MB", icon: "fa-calculator", category: "utilities", description: "Мощный калькулятор" },
+        { id: "notes", name: "Заметки", price: 0, is_free: true, rating: 4.7, downloads: 5678, size: "4 MB", icon: "fa-sticky-note", category: "productivity", description: "Умные заметки" },
+        { id: "weather", name: "Погода", price: 0, is_free: true, rating: 4.6, downloads: 21340, size: "8 MB", icon: "fa-cloud-sun", category: "utilities", description: "Точный прогноз" },
+        { id: "tasks", name: "Задачи", price: 0, is_free: true, rating: 4.8, downloads: 6720, size: "3 MB", icon: "fa-tasks", category: "productivity", description: "Менеджер задач" },
+        { id: "translate", name: "Переводчик", price: 0, is_free: true, rating: 4.5, downloads: 3420, size: "6 MB", icon: "fa-language", category: "utilities", description: "Переводчик 100+ языков" }
+    ];
+}
+
+function renderStoreApps(apps) {
+    const grid = document.getElementById('appsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    apps.forEach(app => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.innerHTML = `
+            <div class="app-icon"><i class="fas ${app.icon || 'fa-app-store'}"></i></div>
+            <div class="app-title">${app.name}</div>
+            <div class="app-desc">${app.description || ''}</div>
+            <div class="app-meta">
+                <span>${app.size || 'N/A'}</span>
+                <span>⭐ ${app.rating || 0}</span>
+                <span>📥 ${(app.downloads || 0).toLocaleString()}</span>
+            </div>
+            <button class="install-btn" onclick="event.stopPropagation();installStoreApp('${app.id}')">
+                ${app.is_free ? 'Бесплатно' : `${app.price} ₽`}
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function installStoreApp(appId) {
+    const apps = getLocalApps();
+    const app = apps.find(a => a.id === appId);
+    if (!app) return;
+    
+    showNotification('Магазин', `Установка ${app.name}...`);
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 10;
+        if (progress >= 100) {
+            clearInterval(interval);
+            if (!installedApps.has(appId)) {
+                installedApps.add(appId);
+                createStoreIcon(app);
+                showNotification('Магазин', `${app.name} установлен!`);
+            }
+        }
+    }, 200);
+}
+
+function createStoreIcon(app) {
+    const container = document.querySelector('.desktop-icons');
+    if (!container || document.querySelector(`.desktop-icon[data-app="${app.id}"]`)) return;
+    
+    const icon = document.createElement('div');
+    icon.className = 'desktop-icon';
+    icon.setAttribute('data-app', app.id);
+    icon.innerHTML = `<i class="fas ${app.icon}"></i><span>${app.name}</span>`;
+    icon.onclick = () => showNotification(app.name, 'Приложение запущено');
+    container.appendChild(icon);
+}
+
+// Проверяем сервер при открытии магазина
+const originalStoreOpen = openApp;
+openApp = function(appId) {
+    originalStoreOpen(appId);
+    if (appId === 'store') {
+        setTimeout(() => {
+            checkStoreConnection().then(() => {
+                loadStoreApps();
+                // Добавляем поиск
+                const searchInput = document.querySelector('.search-bar input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        loadStoreApps('all', e.target.value);
+                    });
+                }
+                // Категории
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const cat = btn.textContent === 'Все' ? 'all' : 
+                                   btn.textContent === 'Игры' ? 'games' :
+                                   btn.textContent === 'SSAP' ? 'ssap' : 'apps';
+                        loadStoreApps(cat);
+                    };
+                });
+            });
+        }, 200);
+    }
+};
+
+// ===== 4. НАСТРОЙКИ - НОВЫЕ РАЗДЕЛЫ =====
+const originalLoadSettings = loadSettingsContent;
+loadSettingsContent = function(categoryId) {
+    originalLoadSettings(categoryId);
+    
+    if (categoryId === 'system') {
+        const section = document.querySelector('.settings-section.active');
+        if (section) {
+            section.innerHTML += `
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">SID Cloud</div>
+                        <div class="setting-desc">Облачное хранилище</div>
+                    </div>
+                    <button class="setting-btn" onclick="showNotification('SID Cloud','Подключено')">Подключить</button>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Автообновление</div>
+                        <div class="setting-desc">Автоматически обновлять приложения</div>
+                    </div>
+                    <input type="checkbox" checked onchange="showNotification('Обновления',this.checked?'Включено':'Выключено')">
+                </div>
+            `;
+        }
+    }
+    
+    if (categoryId === 'personalization') {
+        const section = document.querySelector('.settings-section.active');
+        if (section) {
+            section.innerHTML += `
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Анимации</div>
+                        <div class="setting-desc">Включить анимации интерфейса</div>
+                    </div>
+                    <input type="checkbox" checked onchange="showNotification('Анимации',this.checked?'Включены':'Выключены')">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Прозрачность</div>
+                        <div class="setting-desc">Эффект прозрачности окон</div>
+                    </div>
+                    <input type="range" min="0" max="100" value="80" onchange="showNotification('Прозрачность',this.value+'%')">
+                </div>
+            `;
+        }
+    }
+};
+
+// ===== 5. ТЕРМИНАЛ - НОВЫЕ КОМАНДЫ =====
+const originalTerminal = handleTerminalCommand;
+handleTerminalCommand = function(command, output) {
+    const cmd = command.toLowerCase();
+    
+    if (cmd === 'help') {
+        output.innerHTML += `
+            <div class="terminal-line">Доступные команды:</div>
+            <div class="terminal-line">  <span class="command">help</span> - показать помощь</div>
+            <div class="terminal-line">  <span class="command">clear</span> - очистить экран</div>
+            <div class="terminal-line">  <span class="command">date</span> - показать дату</div>
+            <div class="terminal-line">  <span class="command">time</span> - показать время</div>
+            <div class="terminal-line">  <span class="command">whoami</span> - показать пользователя</div>
+            <div class="terminal-line">  <span class="command">ls</span> - список файлов</div>
+            <div class="terminal-line">  <span class="command">pwd</span> - текущая директория</div>
+            <div class="terminal-line">  <span class="command">echo [текст]</span> - вывести текст</div>
+            <div class="terminal-line">  <span class="command">version</span> - версия системы</div>
+            <div class="terminal-line">  <span class="command">neofetch</span> - информация о системе</div>
+            <div class="terminal-line">  <span class="command">calc</span> - открыть калькулятор</div>
+            <div class="terminal-line">  <span class="command">browser</span> - открыть браузер</div>
+            <div class="terminal-line">  <span class="command">store</span> - открыть магазин</div>
+            <div class="terminal-line">  <span class="command">settings</span> - открыть настройки</div>
+        `;
+        return;
+    }
+    
+    if (cmd === 'neofetch') {
+        output.innerHTML += `
+            <div class="terminal-line" style="color:#00ff00;white-space:pre;">
+╔═══════════════════════════════════════╗
+║   Soiav 2 RTM build 6032             ║
+║   OS: Soiav OS 64-bit                ║
+║   Kernel: Soiav Kernel 5.15          ║
+║   Shell: Soiav Shell v2.0            ║
+║   Theme: ${document.documentElement.getAttribute('data-theme') || 'light'}                    ║
+║   User: ${currentUser.name} ║
+╚═══════════════════════════════════════╝
+            </div>
+        `;
+        return;
+    }
+    
+    if (cmd === 'calc') {
+        output.innerHTML += `<div class="terminal-line"><span class="success">Открываю калькулятор...</span></div>`;
+        setTimeout(() => {
+            const calcWindow = document.querySelector('.desktop .window');
+            if (calcWindow) {
+                // Ищем окно калькулятора, если нет - открываем через showNotification
+                showNotification('Терминал', 'Калькулятор открыт');
+            }
+        }, 300);
+        return;
+    }
+    
+    if (cmd === 'browser') {
+        output.innerHTML += `<div class="terminal-line"><span class="success">Открываю браузер...</span></div>`;
+        setTimeout(() => openApp('browser'), 300);
+        return;
+    }
+    
+    if (cmd === 'store') {
+        output.innerHTML += `<div class="terminal-line"><span class="success">Открываю магазин...</span></div>`;
+        setTimeout(() => openApp('store'), 300);
+        return;
+    }
+    
+    if (cmd === 'settings') {
+        output.innerHTML += `<div class="terminal-line"><span class="success">Открываю настройки...</span></div>`;
+        setTimeout(() => openApp('settings'), 300);
+        return;
+    }
+    
+    // Если команда не обработана - вызываем оригинальную
+    originalTerminal(command, output);
+};
