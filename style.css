@@ -5766,3 +5766,91 @@ body.start-fullscreen {
     .compass { width: 150px; height: 150px; }
     .compass-needle { height: 55px; }
 }
+/* ================== BUILD 6032 - ДОПОЛНЕНИЯ ================== */
+
+/* Кнопка новой вкладки в браузере */
+.browser-tabs-container {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.browser-tab {
+    padding: 6px 12px;
+    background: var(--bg-tertiary);
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    transition: var(--transition);
+}
+
+.browser-tab:hover {
+    background: var(--bg-secondary);
+}
+
+.browser-tab[style*="accent-color"] {
+    color: white !important;
+}
+
+.browser-tab span:last-child {
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 50%;
+}
+
+.browser-tab span:last-child:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Облачные файлы в проводнике */
+.file-item[onclick*="cloud"] {
+    border-left: 3px solid var(--accent-color);
+}
+
+.file-item[onclick*="cloud"]:hover {
+    background: rgba(0,120,215,0.1);
+}
+
+/* Улучшения магазина */
+.app-card .install-btn {
+    transition: all 0.3s;
+}
+
+.app-card .install-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,120,215,0.3);
+}
+
+/* Терминал - новые команды */
+.terminal-line .command {
+    color: #ffaa00;
+}
+
+.terminal-line .success {
+    color: #4caf50;
+}
+
+.terminal-line .error {
+    color: #f44336;
+}
+
+/* Анимации для магазина */
+@keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.store-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--bg-tertiary);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    animation: spin-slow 1s linear infinite;
+}
