@@ -5854,3 +5854,55 @@ body.start-fullscreen {
     margin: 0 auto 15px;
     animation: spin-slow 1s linear infinite;
 }
+/* ================== BUILD 6032 - СТИЛИ ================== */
+
+/* Кнопка новой вкладки в браузере */
+.browser-tab-add {
+    background: var(--bg-tertiary) !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    margin-left: 5px !important;
+    color: var(--text-primary) !important;
+    transition: var(--transition) !important;
+}
+
+.browser-tab-add:hover {
+    background: var(--accent-color) !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+}
+
+/* Улучшения терминала */
+.terminal-line .command {
+    color: #ffaa00;
+}
+
+.terminal-line .success {
+    color: #4caf50;
+}
+
+.terminal-line .error {
+    color: #f44336;
+}
+
+/* Новые категории в настройках */
+.settings-category[data-category="updates"] i {
+    color: #4caf50;
+}
+
+.settings-category[data-category="privacy"] i {
+    color: #2196f3;
+}
+
+/* Улучшения магазина */
+.app-card .install-btn {
+    transition: all 0.3s;
+}
+
+.app-card .install-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,120,215,0.3);
+}
